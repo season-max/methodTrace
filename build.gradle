@@ -2,6 +2,7 @@
 buildscript {
     dependencies {
         classpath 'com.android.tools.build:gradle:3.6.4'
+        classpath 'com.zhangyue.plugins:method-trace:1.0'
     }
 }
 

@@ -1,5 +1,6 @@
-package com.zhangyue.ireader.hook_plugin.utils
+package com.zhangyue.ireader.traceMethod.utils
 
+import com.zhangyue.ireader.traceMethod.TraceConfig
 import org.gradle.api.Project
 import org.gradle.api.logging.Logger
 
@@ -12,9 +13,9 @@ class Logger {
 
         private var debug: Boolean = false
 
-        fun make(project: Project) {
+        fun make(project: Project,config: TraceConfig) {
             logger = project.logger
-            debug = project.trace_config.debug
+            debug = config.debug
         }
 
         fun debug(msg: String?) {
@@ -24,9 +25,10 @@ class Logger {
         }
 
         fun info(msg: String?) {
-            if (debug) {
-                logger?.info(msg)
-            }
+//            if (debug) {
+//                logger?.info(msg)
+//            }
+            println(msg)
         }
 
         fun warn(msg: String?) {
@@ -36,9 +38,10 @@ class Logger {
         }
 
         fun error(msg: String?) {
-            if (debug) {
-                logger?.error(msg)
-            }
+//            if (debug) {
+//                logger?.error(msg)
+//            }
+            println(msg)
         }
     }
 }

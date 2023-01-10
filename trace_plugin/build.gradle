@@ -1,7 +1,7 @@
 plugins {
     id 'java-library'
     id 'org.jetbrains.kotlin.jvm'
-    id 'groovy'
+    id 'maven-publish'
 }
 
 java {
@@ -26,4 +26,36 @@ dependencies {
     implementation 'org.ow2.asm:asm:9.2'
     implementation 'org.ow2.asm:asm-commons:9.2'
     implementation 'com.android.tools.build:gradle:3.6.4'
+}
+
+group = 'com.zhangyue.plugins'
+version = '1.0'
+
+//打包打本地 repo
+publishing {
+
+    publications{
+        mavenJava(MavenPublication){
+            artifactId = 'method-trace'
+            from components.java
+            pom {
+                name = 'method trace'
+                description = 'method const plugin'
+                url = 'https://github.com/season-max/methodTrace'
+                licenses {
+                    license {
+                        name = 'The Apache License, Version 2.0'
+                        url = 'http://www.apache.org/licenses/LICENSE-2.0.txt'
+                    }
+                }
+            }
+        }
+    }
+
+    repositories {
+        maven {
+            url('../repo')
+            name('methodTrace')
+        }
+    }
 }

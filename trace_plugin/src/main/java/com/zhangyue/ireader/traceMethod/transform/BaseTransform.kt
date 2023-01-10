@@ -1,9 +1,9 @@
-package com.zhangyue.ireader.hook_plugin.transform
+package com.zhangyue.ireader.traceMethod.transform
 
 import com.android.build.api.transform.*
 import com.android.build.gradle.internal.pipeline.TransformManager
-import com.zhangyue.ireader.hook_plugin.utils.FileUtil
-import com.zhangyue.ireader.hook_plugin.utils.Logger
+import com.zhangyue.ireader.traceMethod.utils.FileUtil
+import com.zhangyue.ireader.traceMethod.utils.Logger
 import org.apache.commons.io.FileUtils
 import org.apache.commons.io.IOUtils
 import org.gradle.api.Project
@@ -41,29 +41,29 @@ abstract class BaseTransform(val project: Project) : Transform() {
     }
 
     override fun transform(transformInvocation: TransformInvocation) {
-        println("$name start--------------->")
-        val startTime = System.currentTimeMillis()
         onTransformStart(transformInvocation)
         val inputs = transformInvocation.inputs
         val outputProvider = transformInvocation.outputProvider
         val context = transformInvocation.context
-        val isIncremental = transformInvocation.isIncremental
+        val incremental = transformInvocation.isIncremental
         if (outputProvider == null) {
             throw IllegalArgumentException("outputProvider is null!")
         }
-        if (!isIncremental) {
+        Logger.info(if (incremental) "增量编译" else "全量编译")
+        //非增量模式，删除所有内容
+        if (!incremental) {
             outputProvider.deleteAll()
         }
         inputs.forEach {
             it.jarInputs.forEach { jarInput ->
                 submitTask {
-                    forEachJar(jarInput, outputProvider, context, isIncremental)
+                    forEachJar(jarInput, outputProvider, context, incremental)
                 }
             }
 
             it.directoryInputs.forEach { directoryInput ->
                 submitTask {
-                    forEachDir(directoryInput, outputProvider, context, isIncremental)
+                    forEachDir(directoryInput, outputProvider, context, incremental)
                 }
             }
         }
@@ -72,7 +72,6 @@ abstract class BaseTransform(val project: Project) : Transform() {
             it.get()
         }
         onTransformEnd(transformInvocation)
-        println("$name end---------------> duration : ${System.currentTimeMillis() - startTime}")
     }
 
     private fun forEachDir(
@@ -114,11 +113,9 @@ abstract class BaseTransform(val project: Project) : Transform() {
                     }
                     else -> {
                         Logger.error("${file.absolutePath} status is ${it.value} !!")
-                        return
                     }
                 }
             }
-
         } else {
             //全量编译
             val fileTree = inputDir.walk()
@@ -146,12 +143,15 @@ abstract class BaseTransform(val project: Project) : Transform() {
             FileUtil.path2ClassName(file.absolutePath.replace(srcDirPath + File.separator, ""))
         Logger.info("transform dir file:${file.absolutePath},name:$className")
         val sourceBytes = IOUtils.toByteArray(FileInputStream(file))
-        val modifyBytes: ByteArray? =
+        var modifyBytes: ByteArray? =
             if (isLegalClass(file) && shouldHook(className)) {
                 transformClass(className, sourceBytes)
             } else {
                 sourceBytes
             }
+        if (modifyBytes == null) {
+            modifyBytes = sourceBytes
+        }
         FileUtils.writeByteArrayToFile(destFile, modifyBytes)
     }
 
@@ -161,18 +161,18 @@ abstract class BaseTransform(val project: Project) : Transform() {
 
     abstract fun shouldHookClassInner(className: String): Boolean
 
-    private fun transformClass(className: String, sourceBytes: ByteArray?): ByteArray? {
+    private fun transformClass(className: String, sourceBytes: ByteArray): ByteArray? {
         var bytes: ByteArray?
         try {
             bytes = transformClassInner(className, sourceBytes)
         } catch (e: Throwable) {
             bytes = sourceBytes
-            Logger.error("throw exception when modify class $className")
+            Logger.error("throw exception when modify class $className}")
         }
         return bytes
     }
 
-    abstract fun transformClassInner(className: String, sourceBytes: ByteArray?): ByteArray?
+    abstract fun transformClassInner(className: String, sourceBytes: ByteArray): ByteArray?
 
     private fun forEachJar(
         jarInput: JarInput,
@@ -187,7 +187,7 @@ abstract class BaseTransform(val project: Project) : Transform() {
             jarInput.scopes,
             Format.JAR
         )
-        Logger.info("for each jar:${jarInput.file.absolutePath}")
+        Logger.info("for each jar:${jarInput.file.absolutePath}，destFile:${destFile.absolutePath}")
         val isLegalJar = isLegalJar(jarInput.file)
         if (incremental) {
             when (jarInput.status) {
@@ -210,7 +210,6 @@ abstract class BaseTransform(val project: Project) : Transform() {
                 }
                 else -> {
                     Logger.error("${jarInput.name} status is ${jarInput.status}")
-                    return
                 }
             }
         } else {

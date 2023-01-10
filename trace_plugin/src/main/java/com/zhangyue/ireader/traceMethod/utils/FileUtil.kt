@@ -1,4 +1,4 @@
-package com.zhangyue.ireader.hook_plugin.utils
+package com.zhangyue.ireader.traceMethod.utils
 
 import org.apache.commons.codec.digest.DigestUtils
 import java.io.File
