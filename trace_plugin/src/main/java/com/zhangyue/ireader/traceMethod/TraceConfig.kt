@@ -7,11 +7,9 @@ package com.zhangyue.ireader.traceMethod
 open class TraceConfig {
 
     @JvmField
-    var debug: Boolean = false
+    var printlnLog: Boolean = false
 
     @JvmField
-    var hookJar: Boolean = false
-    override fun toString(): String {
-        return "TraceConfig(debug=$debug, hookJar=$hookJar)"
-    }
+    var pkgList: List<String> = ArrayList()
+
 }

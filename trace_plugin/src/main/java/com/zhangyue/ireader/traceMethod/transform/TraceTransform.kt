@@ -1,6 +1,7 @@
 package com.zhangyue.ireader.traceMethod.transform
 
 import com.android.build.api.transform.TransformInvocation
+import com.zhangyue.ireader.traceMethod.GlobalConfig
 import com.zhangyue.ireader.traceMethod.visitor.TraceClassVisitor
 import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
@@ -13,9 +14,8 @@ class TraceTransform(project: Project) : BaseTransform(project) {
 
     private var startTime by Delegates.notNull<Long>()
 
-    override fun shouldHookClassInner(className: String): Boolean {
-        return true
-    }
+    override fun shouldHookClassInner(className: String) =
+        GlobalConfig.enableMethodTrace
 
     override fun transformClassInner(className: String, sourceBytes: ByteArray): ByteArray? {
         val classReader = ClassReader(sourceBytes)

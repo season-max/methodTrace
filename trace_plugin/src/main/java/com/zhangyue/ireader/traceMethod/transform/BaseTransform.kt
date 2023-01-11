@@ -24,9 +24,8 @@ abstract class BaseTransform(val project: Project) : Transform() {
 
     private val taskList: MutableList<Callable<Unit>> = ArrayList()
 
-    override fun getName(): String {
-        return javaClass.simpleName
-    }
+    override fun getName(): String =
+        javaClass.simpleName
 
     override fun getInputTypes(): MutableSet<QualifiedContent.ContentType> {
         return TransformManager.CONTENT_CLASS

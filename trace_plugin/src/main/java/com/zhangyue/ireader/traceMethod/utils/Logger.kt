@@ -15,7 +15,7 @@ class Logger {
 
         fun make(project: Project,config: TraceConfig) {
             logger = project.logger
-            debug = config.debug
+            debug = config.printlnLog
         }
 
         fun debug(msg: String?) {

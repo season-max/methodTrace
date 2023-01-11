@@ -28,6 +28,7 @@ class PluginEntry : Plugin<Project> {
 
     private fun applyProjectConfig(project: Project, config: TraceConfig) {
         println("plugin config:$config")
+        GlobalConfig.pluginConfig = config
         Logger.make(project, config)
     }
 }
