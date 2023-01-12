@@ -27,8 +27,9 @@ class PluginEntry : Plugin<Project> {
     }
 
     private fun applyProjectConfig(project: Project, config: TraceConfig) {
-        println("plugin config:$config")
         GlobalConfig.pluginConfig = config
+        GlobalConfig.enableMethodTrace = config.pkgList.isNotEmpty()
+        println("plugin config:$config,enableMethodTrace:${GlobalConfig.enableMethodTrace}")
         Logger.make(project, config)
     }
 }

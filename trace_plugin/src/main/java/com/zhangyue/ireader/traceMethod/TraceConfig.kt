@@ -11,5 +11,9 @@ open class TraceConfig {
 
     @JvmField
     var pkgList: List<String> = ArrayList()
+    override fun toString(): String {
+        return "TraceConfig(printlnLog=$printlnLog, pkgList=$pkgList)"
+    }
+
 
 }

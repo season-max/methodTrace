@@ -3,5 +3,12 @@ package com.zhangyue.ireader.traceMethod
 object GlobalConfig {
     var pluginConfig: TraceConfig = TraceConfig()
 
-    val enableMethodTrace = pluginConfig.pkgList.isNotEmpty()
+    var enableMethodTrace = false
+
+    /**
+     *  过滤白名单
+     */
+    val filterList = listOf(
+        "kotlin."
+    )
 }

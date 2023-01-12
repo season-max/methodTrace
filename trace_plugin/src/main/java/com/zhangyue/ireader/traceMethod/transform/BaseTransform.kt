@@ -27,17 +27,13 @@ abstract class BaseTransform(val project: Project) : Transform() {
     override fun getName(): String =
         javaClass.simpleName
 
-    override fun getInputTypes(): MutableSet<QualifiedContent.ContentType> {
-        return TransformManager.CONTENT_CLASS
-    }
+    override fun getInputTypes(): MutableSet<QualifiedContent.ContentType> =
+        TransformManager.CONTENT_CLASS
 
-    override fun getScopes(): MutableSet<in QualifiedContent.Scope> {
-        return TransformManager.SCOPE_FULL_PROJECT
-    }
+    override fun getScopes(): MutableSet<in QualifiedContent.Scope> =
+        TransformManager.SCOPE_FULL_PROJECT
 
-    override fun isIncremental(): Boolean {
-        return true
-    }
+    override fun isIncremental(): Boolean = true
 
     override fun transform(transformInvocation: TransformInvocation) {
         onTransformStart(transformInvocation)
@@ -88,7 +84,6 @@ abstract class BaseTransform(val project: Project) : Transform() {
         )
         val srcDirPath = inputDir.absolutePath
         val destDirPath = dest.absolutePath
-        Logger.info("for eachDir -> srcDirPath:$srcDirPath,\r\n destDirPath:$srcDirPath")
         FileUtils.forceMkdir(dest)
         //增量编译
         if (incremental) {
@@ -96,15 +91,9 @@ abstract class BaseTransform(val project: Project) : Transform() {
                 val file = it.key
                 when (it.value) {
                     Status.NOTCHANGED -> {
-                        Logger.info("${file.absolutePath} is not changed")
                     }
                     Status.REMOVED -> {
-                        val destFilePath = file.absolutePath.replace(srcDirPath, destDirPath)
-                        val destFile = File(destFilePath)
-                        if (destFile.exists()) {
-                            destFile.delete()
-                        }
-                        Logger.info("${file.absolutePath} is removed")
+                        file.delete()
                     }
                     Status.ADDED,
                     Status.CHANGED -> {
@@ -140,30 +129,28 @@ abstract class BaseTransform(val project: Project) : Transform() {
         }
         val className =
             FileUtil.path2ClassName(file.absolutePath.replace(srcDirPath + File.separator, ""))
-        Logger.info("transform dir file:${file.absolutePath},name:$className")
         val sourceBytes = IOUtils.toByteArray(FileInputStream(file))
-        var modifyBytes: ByteArray? =
-            if (isLegalClass(file) && shouldHook(className)) {
-                transformClass(className, sourceBytes)
-            } else {
+        val modifyBytes = when (file.name.substringAfterLast(".", "")) {
+            "class" -> {
+                if (needTransform()) {
+                    transformClass(className, sourceBytes)
+                } else {
+                    sourceBytes
+                }
+            }
+            else -> {
                 sourceBytes
             }
-        if (modifyBytes == null) {
-            modifyBytes = sourceBytes
         }
         FileUtils.writeByteArrayToFile(destFile, modifyBytes)
     }
 
-    open fun shouldHook(className: String): Boolean {
-        return shouldHookClassInner(className)
-    }
-
-    abstract fun shouldHookClassInner(className: String): Boolean
+    abstract fun needTransform(): Boolean
 
     private fun transformClass(className: String, sourceBytes: ByteArray): ByteArray? {
         var bytes: ByteArray?
         try {
-            bytes = transformClassInner(className, sourceBytes)
+            bytes = transformClassInner(sourceBytes)
         } catch (e: Throwable) {
             bytes = sourceBytes
             Logger.error("throw exception when modify class $className}")
@@ -171,7 +158,7 @@ abstract class BaseTransform(val project: Project) : Transform() {
         return bytes
     }
 
-    abstract fun transformClassInner(className: String, sourceBytes: ByteArray): ByteArray?
+    abstract fun transformClassInner(sourceBytes: ByteArray): ByteArray?
 
     private fun forEachJar(
         jarInput: JarInput,
@@ -186,18 +173,13 @@ abstract class BaseTransform(val project: Project) : Transform() {
             jarInput.scopes,
             Format.JAR
         )
-        Logger.info("for each jar:${jarInput.file.absolutePath}，destFile:${destFile.absolutePath}")
         val isLegalJar = isLegalJar(jarInput.file)
         if (incremental) {
             when (jarInput.status) {
                 Status.NOTCHANGED -> {
-                    Logger.info("${jarInput.name} is not changed")
                 }
                 Status.REMOVED -> {
-                    if (destFile.exists()) {
-                        destFile.delete()
-                    }
-                    Logger.info("${jarInput.name} is not removed")
+                    jarInput.file.delete()
                 }
                 Status.CHANGED,
                 Status.ADDED -> {
@@ -233,15 +215,19 @@ abstract class BaseTransform(val project: Project) : Transform() {
                 val entryName = jarEntry.name
                 val inputStream = inputJarFile.getInputStream(jarEntry)
                 try {
-                    val className = FileUtil.path2ClassName(entryName)
                     val sourceBytes = IOUtils.toByteArray(inputStream)
-                    if (!jarEntry.isDirectory && isLegalClass(entryName)) {
-                        var modifyBytes: ByteArray? = null
-                        if (shouldHook(className)) {
-                            modifyBytes = transformClass(className, sourceBytes)
-                        }
-                        if (modifyBytes == null) {
-                            modifyBytes = sourceBytes
+                    if (!jarEntry.isDirectory) {
+                        val modifyBytes = when (entryName.substringAfterLast('.', "")) {
+                            "class" -> {
+                                if (needTransform()) {
+                                    transformClass(entryName, sourceBytes)
+                                } else {
+                                    sourceBytes
+                                }
+                            }
+                            else -> {
+                                sourceBytes
+                            }
                         }
                         jarOutputStream.putNextEntry(JarEntry(entryName))
                         jarOutputStream.write(modifyBytes!!)
@@ -265,23 +251,6 @@ abstract class BaseTransform(val project: Project) : Transform() {
     abstract fun onTransformStart(transformInvocation: TransformInvocation)
 
     abstract fun onTransformEnd(transformInvocation: TransformInvocation)
-
-    private fun isLegalClass(file: File): Boolean {
-        return file.isFile && isLegalClass(file.name)
-    }
-
-    private fun isLegalClass(name: String): Boolean {
-        return name.endsWith(".class")
-                && !isAndroidGeneratedClass(name)
-    }
-
-    private fun isAndroidGeneratedClass(className: String): Boolean {
-        return className.contains("R$") ||
-                className.contains("R2$") ||
-                className.contains("R.class") ||
-                className.contains("R2.class") ||
-                className == "BuildConfig.class"
-    }
 
     private fun isLegalJar(file: File): Boolean {
         return file.isFile

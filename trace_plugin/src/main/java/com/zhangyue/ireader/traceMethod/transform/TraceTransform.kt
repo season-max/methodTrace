@@ -14,10 +14,10 @@ class TraceTransform(project: Project) : BaseTransform(project) {
 
     private var startTime by Delegates.notNull<Long>()
 
-    override fun shouldHookClassInner(className: String) =
+    override fun needTransform() =
         GlobalConfig.enableMethodTrace
 
-    override fun transformClassInner(className: String, sourceBytes: ByteArray): ByteArray? {
+    override fun transformClassInner(sourceBytes: ByteArray): ByteArray? {
         val classReader = ClassReader(sourceBytes)
         val classWriter = ClassWriter(
             classReader,

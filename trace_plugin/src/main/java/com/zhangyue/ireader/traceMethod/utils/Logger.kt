@@ -13,35 +13,22 @@ class Logger {
 
         private var debug: Boolean = false
 
-        fun make(project: Project,config: TraceConfig) {
+        fun make(project: Project, config: TraceConfig) {
             logger = project.logger
             debug = config.printlnLog
         }
 
-        fun debug(msg: String?) {
-            if (debug) {
-                logger?.debug(msg)
-            }
-        }
 
         fun info(msg: String?) {
-//            if (debug) {
-//                logger?.info(msg)
-//            }
-            println(msg)
-        }
-
-        fun warn(msg: String?) {
             if (debug) {
-                logger?.warn(msg)
+                println(msg)
             }
         }
 
         fun error(msg: String?) {
-//            if (debug) {
-//                logger?.error(msg)
-//            }
-            println(msg)
+            if (debug) {
+                logger?.error(msg)
+            }
         }
     }
 }

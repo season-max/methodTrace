@@ -1,16 +1,20 @@
 package com.zhangyue.ireader.traceProcess
 
+import android.os.Looper
 import android.util.Log
 
 class MethodTrace {
 
     companion object {
-
-        private val traceList:MutableList<MethodRecord> = mutableListOf()
-
         const val TAG = "methodTrace"
 
-        var startTime: Long = 0L
+        private const val CONST_THRESHOLD: Int = 50
+
+        private const val ONLY_CHECK_MAIN_THREAD: Boolean = true
+
+        private var startTime: Long = 0L
+
+        private const val METHOD_TRACE_PARTITION = "$"
 
         /**
          * 方法入口
@@ -26,12 +30,58 @@ class MethodTrace {
          */
         @JvmStatic
         fun onMethodExit(name: String) {
-            val enterTime = startTime
-            val exitTime = System.currentTimeMillis()
-            val const = exitTime - enterTime
-            Log.d(TAG, "$name const $const")
-            val record = MethodRecord(name,enterTime,exitTime,const)
-            traceList.add(record)
+            methodConst(name, (System.currentTimeMillis() - startTime))
+        }
+
+        private fun methodConst(name: String, const: Long) {
+            val check = if (ONLY_CHECK_MAIN_THREAD) {
+                Looper.getMainLooper() == Looper.myLooper()
+            } else {
+                true
+            }
+            if (const >= CONST_THRESHOLD && check) {
+                saveSlowMethod(name, const)
+            }
+        }
+
+        private fun saveSlowMethod(name: String, const: Long) {
+            val fullClassName = name.split(METHOD_TRACE_PARTITION).firstOrNull()
+            val methodName = name.split(METHOD_TRACE_PARTITION).lastOrNull()
+            val className = fullClassName?.substringAfterLast(".", "") ?: "null"
+            val pkgName = fullClassName?.substringBeforeLast(".", "") ?: "null"
+            val info = SlowMethodInfo().apply {
+                this.pkgName = pkgName
+                this.className = className
+                this.methodName = methodName
+                this.costTimeMs = const
+                this.time = System.currentTimeMillis()
+                this.callStack = traceToString(Throwable().stackTrace)
+            }
+            Log.i(TAG, "info---> ${info.printlnLog()}")
+        }
+
+        private fun traceToString(
+            stackArray: Array<StackTraceElement>,
+        ): String {
+            if (stackArray.isEmpty()) {
+                return "[]"
+            }
+            //跳过插件代码的堆栈
+            val skipFrameCount = 4
+            //最多记录的堆栈
+            val maxLineNumber = 15
+            val stringBuilder = StringBuilder()
+            for (i in 0 until stackArray.size - skipFrameCount) {
+                if (i < skipFrameCount) {
+                    continue
+                }
+                stringBuilder.append(stackArray[i])
+                stringBuilder.append("\r\n")
+                if (i > maxLineNumber) {
+                    break
+                }
+            }
+            return stringBuilder.toString()
         }
     }
 }

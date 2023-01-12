@@ -30,7 +30,9 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         isInPkgList = GlobalConfig.pluginConfig.pkgList.contains(tempName) { init, it ->
             init.startsWith(it)
         }
-        Logger.info("contains $className")
+        if (isInPkgList) {
+            Logger.info("contains $className")
+        }
     }
 
 
@@ -58,7 +60,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
     ): MethodVisitor {
         val abstract = access and Opcodes.ACC_ABSTRACT == Opcodes.ACC_ABSTRACT
         val init = name == "<init>"
-        val cinit = name == "<cinit>"
+        val cinit = name == "<clinit>"
         val mv = super.visitMethod(access, name, descriptor, signature, exceptions)
         return if (abstract || init || cinit || !isInPkgList) {
             mv

@@ -4,8 +4,8 @@ plugins {
 }
 apply plugin: 'method-trace-plugin'
 trace_config {
-    debug = true
-    hookJar = true
+    printlnLog = true
+    pkgList = ['com.zhangyue.ireader.methodtrace']
 }
 
 android {

@@ -32,7 +32,7 @@ class TraceMethodAdapter(
         /**
          * 类全限定名.方法名 分割符
          */
-        const val METHOD_TRACE_PARTITION = "."
+        const val METHOD_TRACE_PARTITION = "$"
     }
 
     override fun onMethodEnter() {
@@ -59,7 +59,7 @@ class TraceMethodAdapter(
     }
 
     private fun generateMethodName(): String {
-        return className + METHOD_TRACE_PARTITION + methodName
+        return className.replace("/", ".") + METHOD_TRACE_PARTITION + methodName
     }
 
 
