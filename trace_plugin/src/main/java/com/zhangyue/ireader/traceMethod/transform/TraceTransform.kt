@@ -12,7 +12,7 @@ import kotlin.properties.Delegates
 
 class TraceTransform(project: Project) : BaseTransform(project) {
 
-    private var startTime by Delegates.notNull<Long>()
+    private var startTime:Long = 0
 
     override fun needTransform() =
         GlobalConfig.enableMethodTrace

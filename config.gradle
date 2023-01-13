@@ -1,0 +1,27 @@
+project.ext {
+
+    /** 包名 **/
+    applicationId = "com.zhangyue.ireader.method_trace"
+
+    /** 编译sdk版本 **/
+    compileSdkVersion = 30
+
+    /** 构建工具版本 **/
+    buildToolsVersion = "29.0.1"
+
+    /** 支持最低版本 **/
+    minSdkVersion = 19
+
+    /** 目标版本 **/
+    targetSdkVersion = 30
+
+    versionCode = 1
+
+    versionName = "1.0.0"
+
+    /**
+     * 插件发布版本
+     */
+    plugin_version = "0.61"
+
+}

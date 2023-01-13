@@ -8,7 +8,7 @@ class MethodTrace {
     companion object {
         const val TAG = "methodTrace"
 
-        private const val CONST_THRESHOLD: Int = 50
+        private const val ERROR_CONST_THRESHOLD: Int = 50
 
         private const val ONLY_CHECK_MAIN_THREAD: Boolean = true
 
@@ -39,7 +39,7 @@ class MethodTrace {
             } else {
                 true
             }
-            if (const >= CONST_THRESHOLD && check) {
+            if (const >= ERROR_CONST_THRESHOLD && check) {
                 saveSlowMethod(name, const)
             }
         }
@@ -61,7 +61,7 @@ class MethodTrace {
         }
 
         private fun traceToString(
-            stackArray: Array<StackTraceElement>,
+            stackArray: Array<StackTraceElement>
         ): String {
             if (stackArray.isEmpty()) {
                 return "[]"
