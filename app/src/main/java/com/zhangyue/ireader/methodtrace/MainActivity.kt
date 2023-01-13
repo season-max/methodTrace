@@ -8,13 +8,26 @@ class MainActivity : AppCompatActivity() {
         super.onCreate(savedInstanceState)
         setContentView(R.layout.activity_main)
 
-        methodConstTest()
+        methodConstError()
+        methodConstWarn()
+        methodConstInfo()
+
+
+    }
+
+    private fun methodConstInfo() {
+        Thread.sleep(11)
+
+    }
+
+    private fun methodConstWarn() {
+
+        Thread.sleep(31)
     }
 
 
+    private fun methodConstError() {
 
-    private fun methodConstTest(){
-
-        Thread.sleep(55)
+        Thread.sleep(51)
     }
 }

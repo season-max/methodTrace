@@ -12,7 +12,7 @@ import kotlin.properties.Delegates
 
 class TraceTransform(project: Project) : BaseTransform(project) {
 
-    private var startTime:Long = 0
+    private var startTime: Long = 0
 
     override fun needTransform() =
         GlobalConfig.enableMethodTrace
@@ -39,6 +39,13 @@ class TraceTransform(project: Project) : BaseTransform(project) {
 
     companion object {
         const val ASM_API = Opcodes.ASM9
+
+        /**
+         * 将插件配置通过插桩应用到代码中
+         */
+        const val APPLY_CONFIG_CLASS_NAME = "com.zhangyue.ireader.traceProcess.MethodTraceConfigKt"
+        const val APPLY_CONFIG_METHOD_NAME = "applyConfig"
+        const val APPLY_CONFIG_METHOD_DESCRIPTOR = "(ZIII)V"
     }
 
 }

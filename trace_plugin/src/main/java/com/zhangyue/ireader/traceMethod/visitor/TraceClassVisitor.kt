@@ -1,6 +1,8 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
 import com.zhangyue.ireader.traceMethod.GlobalConfig
+import com.zhangyue.ireader.traceMethod.transform.TraceTransform
+import com.zhangyue.ireader.traceMethod.transform.TraceTransform.Companion.APPLY_CONFIG_METHOD_NAME
 import com.zhangyue.ireader.traceMethod.utils.Logger
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
@@ -22,16 +24,18 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
     ) {
         super.visit(version, access, name, signature, superName, interfaces)
         className = name ?: "UNKNOWN"
-        inPkgList(className)
+        isInPkgList = inPkgList(className)
     }
 
-    private fun inPkgList(className: String) {
+    private fun inPkgList(className: String): Boolean {
         val tempName = className.replace("/", ".")
-        isInPkgList = GlobalConfig.pluginConfig.pkgList.contains(tempName) { init, it ->
+        val isInPkgList = GlobalConfig.pluginConfig.pkgList.contains(tempName) { init, it ->
             init.startsWith(it)
         }
-        if (isInPkgList) {
-            Logger.info("contains $className")
+        return isInPkgList.also {
+            if (it) {
+                Logger.info("contains $className")
+            }
         }
     }
 
@@ -62,11 +66,16 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         val init = name == "<init>"
         val cinit = name == "<clinit>"
         val mv = super.visitMethod(access, name, descriptor, signature, exceptions)
-        return if (abstract || init || cinit || !isInPkgList) {
-            mv
-        } else {
+        val isApplyConfigMethod =
+            className.replace("/", ".") == TraceTransform.APPLY_CONFIG_CLASS_NAME
+                    && name == APPLY_CONFIG_METHOD_NAME
+        return if (isApplyConfigMethod) {
+            TraceMethodConfigAdapter(className, api, mv, access, name, descriptor)
+        } else if (!abstract && !init && !cinit && isInPkgList) {
             Logger.info("trace method $className --> $name")
             TraceMethodAdapter(className, api, mv, access, name, descriptor)
+        } else {
+            mv
         }
     }
 }
