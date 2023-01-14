@@ -3,6 +3,7 @@ package com.zhangyue.ireader.traceMethod.visitor
 import com.zhangyue.ireader.traceMethod.GlobalConfig
 import com.zhangyue.ireader.traceMethod.transform.TraceTransform
 import com.zhangyue.ireader.traceMethod.transform.TraceTransform.Companion.APPLY_CONFIG_METHOD_NAME
+import com.zhangyue.ireader.traceMethod.transform.TraceTransform.Companion.HANDLE_METHOD_CONST_PACKAGE
 import com.zhangyue.ireader.traceMethod.utils.Logger
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
@@ -13,6 +14,8 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
     lateinit var className: String
 
     private var isInPkgList = false
+
+    private var isHandleClass = false
 
     override fun visit(
         version: Int,
@@ -25,6 +28,13 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         super.visit(version, access, name, signature, superName, interfaces)
         className = name ?: "UNKNOWN"
         isInPkgList = inPkgList(className)
+        isHandleClass = handleClass(className)
+    }
+
+    private fun handleClass(className: String): Boolean {
+        return className.replace("/", ".").startsWith(
+            HANDLE_METHOD_CONST_PACKAGE
+        )
     }
 
     private fun inPkgList(className: String): Boolean {
@@ -71,7 +81,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
                     && name == APPLY_CONFIG_METHOD_NAME
         return if (isApplyConfigMethod) {
             TraceMethodConfigAdapter(className, api, mv, access, name, descriptor)
-        } else if (!abstract && !init && !cinit && isInPkgList) {
+        } else if (!abstract && !init && !cinit && !isHandleClass && isInPkgList) {
             Logger.info("trace method $className --> $name")
             TraceMethodAdapter(className, api, mv, access, name, descriptor)
         } else {

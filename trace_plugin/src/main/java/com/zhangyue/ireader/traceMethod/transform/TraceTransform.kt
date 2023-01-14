@@ -40,6 +40,11 @@ class TraceTransform(project: Project) : BaseTransform(project) {
         const val ASM_API = Opcodes.ASM9
 
         /**
+         * 耗时测试工具类包名
+         */
+        const val HANDLE_METHOD_CONST_PACKAGE = "com.zhangyue.ireader.traceProcess"
+
+        /**
          * 将插件配置通过插桩应用到代码中
          */
         const val APPLY_CONFIG_CLASS_NAME = "com/zhangyue/ireader/traceProcess/MethodTraceConfigKt"
