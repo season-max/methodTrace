@@ -50,4 +50,5 @@ dependencies {
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.4.0'
 
     implementation project(':trace_process')
+//    implementation 'com.github.season-max.methodTrace:trace_process:0.1'
 }
