@@ -12,8 +12,15 @@ class MainActivity : AppCompatActivity() {
         methodConstWarn()
         methodConstInfo()
 
-
+        Thread({
+            methodCostThread()
+        }, "const_thread").start()
     }
+
+    private fun methodCostThread() {
+        Thread.sleep(100)
+    }
+
 
     private fun methodConstInfo() {
         Thread.sleep(11)

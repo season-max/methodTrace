@@ -73,6 +73,7 @@ class MethodTrace {
                 this.methodName = methodName
                 this.costTimeMs = const
                 this.time = System.currentTimeMillis()
+                this.threadName = Thread.currentThread().name
                 this.callStack = traceToString(Throwable().stackTrace)
             }.printlnLog()
         }

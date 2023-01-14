@@ -13,6 +13,8 @@ class SlowMethodInfo {
 
     var callStack: String? = null
 
+    var threadName: String? = null
+
     /**
      * 格式化输出
      */
@@ -25,6 +27,8 @@ class SlowMethodInfo {
                 .append("methodName=$methodName")
                 .append("\r\n")
                 .append("costTimeMs=$costTimeMs")
+                .append("\r\n")
+                .append("threadName=$threadName")
                 .append("\r\n")
                 .append("time=$time")
                 .append("\r\n")

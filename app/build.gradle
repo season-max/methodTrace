@@ -6,7 +6,7 @@ apply plugin: 'method-trace-plugin'
 trace_config {
     printlnLog = true
     pkgList = ['com.zhangyue.ireader.methodtrace']
-    checkOnlyMainThread = true
+    checkOnlyMainThread = false
     errorThreshold = 50
     warnThreshold = 30
 }
