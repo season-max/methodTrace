@@ -14,18 +14,3 @@ var infoConstThreshold1 = Integer.MAX_VALUE
 fun applyConfig() {
 
 }
-
-/**
- * 插件中通过 ASM 调用，应用插件的配置
- */
-fun applyConfigInner(
-    onlyCheckMainThread: Boolean,
-    infoConstThreshold: Int,
-    warnConstThreshold: Int,
-    errorConstThreshold: Int,
-) {
-    onlyCheckMainThread1 = onlyCheckMainThread
-    infoConstThreshold1 = infoConstThreshold
-    warnConstThreshold1 = warnConstThreshold
-    errorConstThreshold1 = errorConstThreshold
-}

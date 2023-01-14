@@ -7,7 +7,6 @@ import org.gradle.api.Project
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 import org.objectweb.asm.Opcodes
-import kotlin.properties.Delegates
 
 
 class TraceTransform(project: Project) : BaseTransform(project) {
@@ -43,9 +42,12 @@ class TraceTransform(project: Project) : BaseTransform(project) {
         /**
          * 将插件配置通过插桩应用到代码中
          */
-        const val APPLY_CONFIG_CLASS_NAME = "com.zhangyue.ireader.traceProcess.MethodTraceConfigKt"
+        const val APPLY_CONFIG_CLASS_NAME = "com/zhangyue/ireader/traceProcess/MethodTraceConfigKt"
         const val APPLY_CONFIG_METHOD_NAME = "applyConfig"
-        const val APPLY_CONFIG_METHOD_DESCRIPTOR = "(ZIII)V"
+        const val APPLY_CONFIG_FIELD_ONLY_CHECK_MAIN = "onlyCheckMainThread1"
+        const val APPLY_CONFIG_FIELD_INFO_THRESHOLD = "infoConstThreshold1"
+        const val APPLY_CONFIG_FIELD_WARN_THRESHOLD = "warnConstThreshold1"
+        const val APPLY_CONFIG_FIELD_ERROR_THRESHOLD = "errorConstThreshold1"
     }
 
 }

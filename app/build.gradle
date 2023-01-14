@@ -9,7 +9,6 @@ trace_config {
     checkOnlyMainThread = true
     errorThreshold = 50
     warnThreshold = 30
-    infoThreshold = 10
 }
 
 android {

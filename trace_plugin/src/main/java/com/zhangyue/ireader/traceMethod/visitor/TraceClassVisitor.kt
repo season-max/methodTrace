@@ -67,7 +67,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         val cinit = name == "<clinit>"
         val mv = super.visitMethod(access, name, descriptor, signature, exceptions)
         val isApplyConfigMethod =
-            className.replace("/", ".") == TraceTransform.APPLY_CONFIG_CLASS_NAME
+            className == TraceTransform.APPLY_CONFIG_CLASS_NAME
                     && name == APPLY_CONFIG_METHOD_NAME
         return if (isApplyConfigMethod) {
             TraceMethodConfigAdapter(className, api, mv, access, name, descriptor)

@@ -14,6 +14,13 @@ class MethodTrace {
 
         init {
             applyConfig()
+            Log.i(
+                TAG,
+                "plugin config --> [onlyCheckMainThread1:$onlyCheckMainThread1 ," +
+                        "infoConstThreshold1:$infoConstThreshold1," +
+                        "warnConstThreshold1:$warnConstThreshold1," +
+                        "errorConstThreshold1:$errorConstThreshold1]"
+            )
         }
 
         /**
