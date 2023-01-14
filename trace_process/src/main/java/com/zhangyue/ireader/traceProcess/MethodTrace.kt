@@ -89,7 +89,7 @@ class MethodTrace {
             //最多记录的堆栈
             val maxLineNumber = 15
             val stringBuilder = StringBuilder()
-            for (i in 0 until stackArray.size - skipFrameCount) {
+            for (i in stackArray.indices) {
                 if (i < skipFrameCount) {
                     continue
                 }
