@@ -25,6 +25,15 @@ class TraceTransform(project: Project) : BaseTransform(project) {
         println("$name end---------------> duration : ${System.currentTimeMillis() - startTime}")
     }
 
+
+    override fun transformClassInner(sourceBytes: ByteArray): ByteArray? {
+        val transforms =
+            listOf(ApplyConfigTransform(), MethodTraceTransform())
+        return transforms.fold(sourceBytes) { a, b ->
+            b.onTransform(a)
+        }
+    }
+
     companion object {
         const val ASM_API = Opcodes.ASM9
 
