@@ -150,15 +150,17 @@ abstract class BaseTransform(val project: Project) : Transform() {
     private fun transformClass(className: String, sourceBytes: ByteArray): ByteArray? {
         var bytes: ByteArray?
         try {
-            bytes = transformClassInner(sourceBytes)
+            val transforms =
+                listOf(ApplyConfigTransform(), MethodTraceTransform())
+            bytes = transforms.fold(sourceBytes) { a, b ->
+                b.onTransform(a)
+            }
         } catch (e: Throwable) {
             bytes = sourceBytes
             Logger.error("throw exception when modify class $className}")
         }
         return bytes
     }
-
-    abstract fun transformClassInner(sourceBytes: ByteArray): ByteArray?
 
     private fun forEachJar(
         jarInput: JarInput,

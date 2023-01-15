@@ -15,6 +15,10 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
 
     private var isInPkgList = false
 
+    /**
+     * 是否是耗时函数处理类
+     * 如果是，不做插桩处理
+     */
     private var isHandleClass = false
 
     override fun visit(
@@ -44,7 +48,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         }
         return isInPkgList.also {
             if (it) {
-                Logger.info("contains $className")
+                Logger.info("transform class $className")
             }
         }
     }
@@ -76,12 +80,13 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         val init = name == "<init>"
         val cinit = name == "<clinit>"
         val mv = super.visitMethod(access, name, descriptor, signature, exceptions)
-        val isApplyConfigMethod =
-            className == TraceTransform.APPLY_CONFIG_CLASS_NAME
-                    && name == APPLY_CONFIG_METHOD_NAME
-        return if (isApplyConfigMethod) {
-            TraceMethodConfigAdapter(className, api, mv, access, name, descriptor)
-        } else if (!abstract && !init && !cinit && !isHandleClass && isInPkgList) {
+        return if (
+            !abstract
+            && !init
+            && !cinit
+            && !isHandleClass
+            && isInPkgList
+        ) {
             Logger.info("trace method $className --> $name")
             TraceMethodAdapter(className, api, mv, access, name, descriptor)
         } else {

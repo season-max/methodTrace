@@ -14,18 +14,7 @@ class TraceTransform(project: Project) : BaseTransform(project) {
     private var startTime: Long = 0
 
     override fun needTransform() =
-        GlobalConfig.enableMethodTrace
-
-    override fun transformClassInner(sourceBytes: ByteArray): ByteArray? {
-        val classReader = ClassReader(sourceBytes)
-        val classWriter = ClassWriter(
-            classReader,
-            ClassWriter.COMPUTE_MAXS //自动计算栈深和局部变量表大小
-        )
-        val cv = TraceClassVisitor(ASM_API, classWriter)
-        classReader.accept(cv, ClassReader.EXPAND_FRAMES)
-        return classWriter.toByteArray()
-    }
+        true
 
     override fun onTransformStart(transformInvocation: TransformInvocation) {
         println("$name start--------------->")

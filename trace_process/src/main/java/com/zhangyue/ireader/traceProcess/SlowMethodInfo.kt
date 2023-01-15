@@ -20,19 +20,19 @@ class SlowMethodInfo {
      */
     fun printlnLog(): String {
         return StringBuilder().apply {
-            append("pkgName=$pkgName")
+            append("pkgName : $pkgName")
                 .append("\r\n")
-                .append("className=$className")
+                .append("className : $className")
                 .append("\r\n")
-                .append("methodName=$methodName")
+                .append("methodName : $methodName")
                 .append("\r\n")
-                .append("costTimeMs=$costTimeMs")
+                .append("costTimeMs : $costTimeMs")
                 .append("\r\n")
-                .append("threadName=$threadName")
+                .append("threadName : $threadName")
                 .append("\r\n")
-                .append("time=$time")
+                .append("time : $time")
                 .append("\r\n")
-                .append("callStack=$callStack")
+                .append("callStack : $callStack")
         }.let {
             it.toString()
         }

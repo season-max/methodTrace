@@ -11,7 +11,7 @@ import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.AdviceAdapter
 
-class TraceMethodConfigAdapter(
+class ApplyConfigMethodAdapter(
     className: String,
     api: Int,
     mv: MethodVisitor,
