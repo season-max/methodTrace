@@ -150,7 +150,7 @@ abstract class BaseTransform(val project: Project) : Transform() {
     private fun transformClass(className: String, sourceBytes: ByteArray): ByteArray? {
         var bytes: ByteArray?
         try {
-            bytes = transformClassInner(sourceBytes)
+            bytes = transformClassInner(className, sourceBytes)
         } catch (e: Throwable) {
             bytes = sourceBytes
             Logger.error("throw exception when modify class $className}")
@@ -158,7 +158,7 @@ abstract class BaseTransform(val project: Project) : Transform() {
         return bytes
     }
 
-    abstract fun transformClassInner(sourceBytes: ByteArray): ByteArray?
+    abstract fun transformClassInner(name: String, sourceBytes: ByteArray): ByteArray?
 
     private fun forEachJar(
         jarInput: JarInput,
@@ -220,7 +220,9 @@ abstract class BaseTransform(val project: Project) : Transform() {
                         val modifyBytes = when (entryName.substringAfterLast('.', "")) {
                             "class" -> {
                                 if (needTransform()) {
-                                    transformClass(entryName, sourceBytes)
+                                    transformClass(entryName.run {
+                                        FileUtil.path2ClassName(this)
+                                    }, sourceBytes)
                                 } else {
                                     sourceBytes
                                 }

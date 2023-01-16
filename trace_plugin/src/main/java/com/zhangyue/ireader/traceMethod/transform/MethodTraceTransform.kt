@@ -6,7 +6,7 @@ import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
 
 class MethodTraceTransform : TransformListener {
-    override fun onTransform(bytes: ByteArray): ByteArray {
+    override fun onTransform(className: String, bytes: ByteArray): ByteArray {
         if (!GlobalConfig.enableMethodTrace) {
             return bytes
         }

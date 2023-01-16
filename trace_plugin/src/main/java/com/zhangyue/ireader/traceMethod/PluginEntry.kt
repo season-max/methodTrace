@@ -7,7 +7,9 @@ import com.zhangyue.ireader.traceMethod.utils.Logger
 import org.gradle.api.Plugin
 import org.gradle.api.Project
 
-
+/**
+ * 插件入口
+ */
 class PluginEntry : Plugin<Project> {
 
     override fun apply(project: Project) {

@@ -41,8 +41,14 @@ open class TraceConfig {
      */
     @JvmField
     var infoThreshold: Int = 0
+
+    /**
+     * 自定义耗时处理类名称
+     */
+    @JvmField
+    var customHandle: String? = null
     override fun toString(): String {
-        return "TraceConfig(printlnLog=$printlnLog, pkgList=$pkgList, checkOnlyMainThread=$checkOnlyMainThread, errorThreshold=$errorThreshold, warnThreshold=$warnThreshold, infoThreshold=$infoThreshold)"
+        return "TraceConfig(printlnLog=$printlnLog, pkgList=$pkgList, checkOnlyMainThread=$checkOnlyMainThread, errorThreshold=$errorThreshold, warnThreshold=$warnThreshold, infoThreshold=$infoThreshold, customHandle=$customHandle)"
     }
 
 

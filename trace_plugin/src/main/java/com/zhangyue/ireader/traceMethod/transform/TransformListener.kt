@@ -1,5 +1,5 @@
 package com.zhangyue.ireader.traceMethod.transform
 
 interface TransformListener {
-    fun onTransform(bytes: ByteArray):ByteArray
+    fun onTransform(className: String, bytes: ByteArray): ByteArray
 }

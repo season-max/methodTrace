@@ -1,16 +1,20 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
-import com.zhangyue.ireader.traceMethod.transform.TraceTransform.Companion.APPLY_CONFIG_CLASS_NAME
-import com.zhangyue.ireader.traceMethod.transform.TraceTransform.Companion.APPLY_CONFIG_METHOD_NAME
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 
-class ApplyConfigClassVisitor(
+class CustomHandleClassVisitor(
     api: Int,
-    cv: ClassVisitor
+    cv: ClassVisitor,
+    customHandle: String
 ) : ClassVisitor(api, cv) {
 
     private var className: String? = null
+    private val customHandle: String
+
+    init {
+        this.customHandle = customHandle
+    }
 
     override fun visit(
         version: Int,
@@ -26,18 +30,16 @@ class ApplyConfigClassVisitor(
 
     override fun visitMethod(
         access: Int,
-        name: String,
-        descriptor: String,
+        name: String?,
+        descriptor: String?,
         signature: String?,
         exceptions: Array<out String>?
     ): MethodVisitor {
         val mv = super.visitMethod(access, name, descriptor, signature, exceptions)
-        return if (name == APPLY_CONFIG_METHOD_NAME) {
-            ApplyConfigMethodAdapter(className!!, api, mv, access, name, descriptor)
+        return if (name == "<clinit>" && descriptor == "()V") {//类初始化
+            CustomHandleMethodHandle(className!!, api, mv, access, name, descriptor,customHandle)
         } else {
             mv
         }
     }
-
-
 }

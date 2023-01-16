@@ -26,11 +26,11 @@ class TraceTransform(project: Project) : BaseTransform(project) {
     }
 
 
-    override fun transformClassInner(sourceBytes: ByteArray): ByteArray? {
+    override fun transformClassInner(name: String, sourceBytes: ByteArray): ByteArray? {
         val transforms =
-            listOf(ApplyConfigTransform(), MethodTraceTransform())
+            listOf(ApplyConfigTransform(), MethodTraceTransform(), CustomHandleTransform())
         return transforms.fold(sourceBytes) { a, b ->
-            b.onTransform(a)
+            b.onTransform(name, a)
         }
     }
 
@@ -51,6 +51,8 @@ class TraceTransform(project: Project) : BaseTransform(project) {
         const val APPLY_CONFIG_FIELD_INFO_THRESHOLD = "infoConstThreshold1"
         const val APPLY_CONFIG_FIELD_WARN_THRESHOLD = "warnConstThreshold1"
         const val APPLY_CONFIG_FIELD_ERROR_THRESHOLD = "errorConstThreshold1"
+
+        const val METHOD_TRACE_CLASS_NAME = "com.zhangyue.ireader.traceProcess.MethodTrace"
     }
 
 }

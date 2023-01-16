@@ -9,6 +9,7 @@ trace_config {
     checkOnlyMainThread = false
     errorThreshold = 50
     warnThreshold = 30
+    customHandle = "com.zhangyue.ireader.methodtrace.MyMethodTraceHandle"
 }
 
 android {
