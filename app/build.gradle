@@ -7,8 +7,11 @@ trace_config {
     printlnLog = true
     pkgList = ['com.zhangyue.ireader.methodtrace']
     checkOnlyMainThread = false
+    //保证 info < warn < error,
+    // 如果阈值设置未 0 或者未设置，不会输出对应的 log 等级的日志
     errorThreshold = 50
     warnThreshold = 30
+    infoThreshold = 10
     customHandle = "com.zhangyue.ireader.methodtrace.MyMethodTraceHandle"
 }
 

@@ -18,6 +18,9 @@ import java.util.jar.JarEntry
 import java.util.jar.JarFile
 import java.util.jar.JarOutputStream
 
+/**
+ * 基础 transform ，执行遍历 class 文件的逻辑
+ */
 abstract class BaseTransform(val project: Project) : Transform() {
 
     private val service: AbstractExecutorService = ForkJoinPool.commonPool()

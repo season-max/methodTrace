@@ -20,4 +20,4 @@
 # hide the original source file name.
 #-renamesourcefileattribute SourceFile
 
--keep class com.zhangyue.ireader.traceProcess.** {*;}
+-keep class com.zhangyue.ireader.trace_1_2_3_7_process.** {*;}

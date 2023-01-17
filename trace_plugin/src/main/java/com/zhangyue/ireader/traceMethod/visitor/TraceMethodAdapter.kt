@@ -1,5 +1,11 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
+import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.DOT
+import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.METHOD_TRACE_CLASS_NAME
+import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.METHOD_TRACE_ENTER
+import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.METHOD_TRACE_EXIT
+import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.METHOD_TRACE_PARTITION
+import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.SEPARATOR
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.AdviceAdapter
@@ -21,25 +27,11 @@ class TraceMethodAdapter(
         this.methodName = name
     }
 
-    companion object {
-        /**
-         * 方法处理类
-         */
-        const val METHOD_TRACE_CLASS = "com/zhangyue/ireader/traceProcess/MethodTrace"
-        const val METHOD_TRACE_ENTER = "onMethodEnter"
-        const val METHOD_TRACE_EXIT = "onMethodExit"
-
-        /**
-         * 类全限定名.方法名 分割符
-         */
-        const val METHOD_TRACE_PARTITION = "$"
-    }
-
     override fun onMethodEnter() {
         super.onMethodEnter()
         mv.visitMethodInsn(
             Opcodes.INVOKESTATIC,
-            METHOD_TRACE_CLASS,
+            METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
             METHOD_TRACE_ENTER,
             "()V",
             false
@@ -51,7 +43,7 @@ class TraceMethodAdapter(
         mv.visitLdcInsn(generateMethodName())
         mv.visitMethodInsn(
             Opcodes.INVOKESTATIC,
-            METHOD_TRACE_CLASS,
+            METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
             METHOD_TRACE_EXIT,
             "(Ljava/lang/String;)V",
             false
@@ -59,7 +51,7 @@ class TraceMethodAdapter(
     }
 
     private fun generateMethodName(): String {
-        return className.replace("/", ".") + METHOD_TRACE_PARTITION + methodName
+        return className.replace(SEPARATOR, DOT) + METHOD_TRACE_PARTITION + methodName
     }
 
 

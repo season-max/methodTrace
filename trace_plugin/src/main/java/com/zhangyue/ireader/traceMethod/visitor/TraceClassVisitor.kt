@@ -1,10 +1,12 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
 import com.zhangyue.ireader.traceMethod.GlobalConfig
-import com.zhangyue.ireader.traceMethod.transform.TraceTransform
-import com.zhangyue.ireader.traceMethod.transform.TraceTransform.Companion.APPLY_CONFIG_METHOD_NAME
-import com.zhangyue.ireader.traceMethod.transform.TraceTransform.Companion.HANDLE_METHOD_CONST_PACKAGE
+import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.DOT
+import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.IGNORE_ANNOTATION_NAME
+import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.TRACE_METHOD_PROCESS_PACKAGE
+import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.SEPARATOR
 import com.zhangyue.ireader.traceMethod.utils.Logger
+import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
@@ -19,7 +21,9 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
      * 是否是耗时函数处理类
      * 如果是，不做插桩处理
      */
-    private var isHandleClass = false
+    private var isInTraceProcessPkg = false
+
+    private var needIgnore = false
 
     override fun visit(
         version: Int,
@@ -32,17 +36,24 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         super.visit(version, access, name, signature, superName, interfaces)
         className = name ?: "UNKNOWN"
         isInPkgList = inPkgList(className)
-        isHandleClass = handleClass(className)
+        isInTraceProcessPkg = traceProcess(className)
     }
 
-    private fun handleClass(className: String): Boolean {
-        return className.replace("/", ".").startsWith(
-            HANDLE_METHOD_CONST_PACKAGE
+    override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor {
+        if (descriptor == "L${IGNORE_ANNOTATION_NAME.replace(DOT, SEPARATOR)};") {
+            needIgnore = true
+        }
+        return super.visitAnnotation(descriptor, visible)
+    }
+
+    private fun traceProcess(className: String): Boolean {
+        return className.replace(SEPARATOR, DOT).startsWith(
+            TRACE_METHOD_PROCESS_PACKAGE
         )
     }
 
     private fun inPkgList(className: String): Boolean {
-        val tempName = className.replace("/", ".")
+        val tempName = className.replace(SEPARATOR, DOT)
         val isInPkgList = GlobalConfig.pluginConfig.pkgList.contains(tempName) { init, it ->
             init.startsWith(it)
         }
@@ -84,8 +95,9 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
             !abstract
             && !init
             && !cinit
-            && !isHandleClass
+            && !isInTraceProcessPkg
             && isInPkgList
+            && !needIgnore
         ) {
             Logger.info("trace method $className --> $name")
             TraceMethodAdapter(className, api, mv, access, name, descriptor)

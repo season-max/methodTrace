@@ -1,4 +1,4 @@
-package com.zhangyue.ireader.traceProcess
+package com.zhangyue.ireader.trace_1_2_3_7_process
 
 class SlowMethodInfo {
     var pkgName: String? = null
@@ -33,9 +33,7 @@ class SlowMethodInfo {
                 .append("time : $time")
                 .append("\r\n")
                 .append("callStack : $callStack")
-        }.let {
-            it.toString()
-        }
+        }.toString()
     }
 
 
