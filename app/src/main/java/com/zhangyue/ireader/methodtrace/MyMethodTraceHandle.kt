@@ -7,6 +7,7 @@ import com.zhangyue.ireader.trace_1_2_3_7_process.handle.IMethodTraceHandle
 
 /**
  * 自定义日志输出
+ * 需要添加 [IgnoreMethodTrace] 注解
  */
 @Keep
 @IgnoreMethodTrace

@@ -18,12 +18,15 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
     private var isInPkgList = false
 
     /**
-     * 是否是耗时函数处理类
+     * 是否是耗时函数处理 package
      * 如果是，不做插桩处理
      */
     private var isInTraceProcessPkg = false
 
-    private var needIgnore = false
+    /**
+     * 是否包含忽略插桩注解
+     */
+    private var hasIgnoreAnnotation = false
 
     override fun visit(
         version: Int,
@@ -41,7 +44,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
 
     override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor {
         if (descriptor == "L${IGNORE_ANNOTATION_NAME.replace(DOT, SEPARATOR)};") {
-            needIgnore = true
+            hasIgnoreAnnotation = true
         }
         return super.visitAnnotation(descriptor, visible)
     }
@@ -92,12 +95,13 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         val cinit = name == "<clinit>"
         val mv = super.visitMethod(access, name, descriptor, signature, exceptions)
         return if (
+            //非抽象类 & 非初始化方法 & 不在处理包内 & 在插桩范围内 & 不含有特定注解
             !abstract
             && !init
             && !cinit
             && !isInTraceProcessPkg
             && isInPkgList
-            && !needIgnore
+            && !hasIgnoreAnnotation
         ) {
             Logger.info("trace method $className --> $name")
             TraceMethodAdapter(className, api, mv, access, name, descriptor)
