@@ -24,14 +24,18 @@ class MethodTraceFirstTranceTransform(project: Project) : BaseTransform(project)
 
     override fun transformClassInner(name: String, sourceBytes: ByteArray): ByteArray {
         val transforms =
-            listOf(CustomHandleTransform(), ApplyConfigTransform(), MethodTraceTransform())
+            listOf(
+                CustomHandleTransform(),
+                ApplyConfigTransform(),
+                MethodTraceTransform()
+            )
         return transforms.fold(sourceBytes) { a, b ->
             b.onTransform(name, a)
         }
     }
 
     companion object {
-        const val ASM_API = Opcodes.ASM9
+        const val ASM_API = Opcodes.ASM7
 
         const val DOT = "."
 
@@ -74,8 +78,11 @@ class MethodTraceFirstTranceTransform(project: Project) : BaseTransform(project)
         /**
          * 忽略插桩注解
          */
-        const val IGNORE_ANNOTATION_NAME =
-            "$TRACE_METHOD_PROCESS_PACKAGE.annotation.IgnoreMethodTrace"
+        val IGNORE_ANNOTATION_DESCRIPTOR =
+            "L$TRACE_METHOD_PROCESS_PACKAGE.annotation.IgnoreMethodTrace;".replace(DOT, SEPARATOR)
+
+        val EXECUTOR_ANNOTATION_DESCRIPTOR =
+            "L$TRACE_METHOD_PROCESS_PACKAGE.annotation.ExecuteMethodTrace;".replace(DOT, SEPARATOR)
     }
 
 }

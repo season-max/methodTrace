@@ -2,7 +2,8 @@ package com.zhangyue.ireader.traceMethod.visitor
 
 import com.zhangyue.ireader.traceMethod.GlobalConfig
 import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.DOT
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.IGNORE_ANNOTATION_NAME
+import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.EXECUTOR_ANNOTATION_DESCRIPTOR
+import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.IGNORE_ANNOTATION_DESCRIPTOR
 import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.TRACE_METHOD_PROCESS_PACKAGE
 import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.SEPARATOR
 import com.zhangyue.ireader.traceMethod.utils.Logger
@@ -15,18 +16,26 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
 
     lateinit var className: String
 
+    /**
+     *
+     */
     private var isInPkgList = false
 
     /**
-     * 是否是耗时函数处理 package
+     * 是否是插件内部的 package
      * 如果是，不做插桩处理
      */
-    private var isInTraceProcessPkg = false
+    private var isInPluginPkg = false
 
     /**
      * 是否包含忽略插桩注解
      */
     private var hasIgnoreAnnotation = false
+
+    /**
+     * 是否包含执行插桩注解
+     */
+    private var hasExecutorAnnotation = false;
 
     override fun visit(
         version: Int,
@@ -38,24 +47,26 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
     ) {
         super.visit(version, access, name, signature, superName, interfaces)
         className = name ?: "UNKNOWN"
-        isInPkgList = inPkgList(className)
-        isInTraceProcessPkg = traceProcess(className)
+        isInPkgList = inSetUpPkgList(className)
+        isInPluginPkg = inPluginPkg(className)
     }
 
     override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor {
-        if (descriptor == "L${IGNORE_ANNOTATION_NAME.replace(DOT, SEPARATOR)};") {
+        if (descriptor == IGNORE_ANNOTATION_DESCRIPTOR) {
             hasIgnoreAnnotation = true
+        } else if (descriptor == EXECUTOR_ANNOTATION_DESCRIPTOR) {
+            hasExecutorAnnotation = true
         }
         return super.visitAnnotation(descriptor, visible)
     }
 
-    private fun traceProcess(className: String): Boolean {
+    private fun inPluginPkg(className: String): Boolean {
         return className.replace(SEPARATOR, DOT).startsWith(
             TRACE_METHOD_PROCESS_PACKAGE
         )
     }
 
-    private fun inPkgList(className: String): Boolean {
+    private fun inSetUpPkgList(className: String): Boolean {
         val tempName = className.replace(SEPARATOR, DOT)
         val isInPkgList = GlobalConfig.pluginConfig.pkgList.contains(tempName) { init, it ->
             init.startsWith(it)
@@ -91,18 +102,20 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         exceptions: Array<out String>?
     ): MethodVisitor {
         val abstract = access and Opcodes.ACC_ABSTRACT == Opcodes.ACC_ABSTRACT
-        val init = name == "<init>"
-        val cinit = name == "<clinit>"
         val mv = super.visitMethod(access, name, descriptor, signature, exceptions)
-        return if (
-            //非抽象类 & 非初始化方法 & 不在处理包内 & 在插桩范围内 & 不含有特定注解
-            !abstract
-            && !init
-            && !cinit
-            && !isInTraceProcessPkg
-            && isInPkgList
-            && !hasIgnoreAnnotation
-        ) {
+        // 抽象方法不处理
+        if (abstract) {
+            return mv
+        }
+        //方法上有忽略插桩的注解
+        if (hasIgnoreAnnotation) {
+            return mv
+        }
+        // 在插件内部的包内部不处理
+        if (isInPluginPkg) {
+            return mv
+        }
+        return if (isInPkgList || hasExecutorAnnotation) {
             Logger.info("trace method $className --> $name")
             TraceMethodAdapter(className, api, mv, access, name, descriptor)
         } else {
