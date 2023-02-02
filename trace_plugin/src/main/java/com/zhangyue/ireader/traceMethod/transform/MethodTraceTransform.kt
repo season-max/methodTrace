@@ -1,6 +1,5 @@
 package com.zhangyue.ireader.traceMethod.transform
 
-import com.zhangyue.ireader.traceMethod.GlobalConfig
 import com.zhangyue.ireader.traceMethod.visitor.TraceClassVisitor
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
@@ -10,9 +9,6 @@ import org.objectweb.asm.ClassWriter
  */
 class MethodTraceTransform : TransformListener {
     override fun onTransform(className: String, bytes: ByteArray): ByteArray {
-        if (!GlobalConfig.enableMethodTrace) {
-            return bytes
-        }
         val classReader = ClassReader(bytes)
         val classWriter = ClassWriter(
             classReader,

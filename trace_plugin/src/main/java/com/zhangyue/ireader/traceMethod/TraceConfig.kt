@@ -28,19 +28,19 @@ open class TraceConfig {
      * log error 阈值
      */
     @JvmField
-    var errorThreshold: Int = 0
+    var errorThreshold: Int? = null
 
     /**
      * log warn 阈值
      */
     @JvmField
-    var warnThreshold: Int = 0
+    var warnThreshold: Int? = null
 
     /**
      * log info 阈值
      */
     @JvmField
-    var infoThreshold: Int = 0
+    var infoThreshold: Int? = null
 
     /**
      * 自定义耗时处理类名称

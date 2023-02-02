@@ -6,25 +6,63 @@ import java.lang.RuntimeException
 object GlobalConfig {
     var pluginConfig: TraceConfig = TraceConfig()
 
-    var enableMethodTrace = false
+    /**
+     * 设置上限 50s
+     */
+    private const val THRESHOLD_UPPER_LIMIT = 50_000
 
-
-    private fun lessThanZero(vararg args: Int): Boolean {
+    /**
+     * return arg <= 0
+     */
+    private fun lessThanZero(vararg args: Int?): Boolean {
         for (i in args) {
-            if (i < 0) {
-                return true
+            if (i != null) {
+                if (i <= 0) {
+                    return true
+                }
             }
         }
         return false
     }
 
-    private fun moreThanIntMax(vararg args: Int): Boolean {
+    /**
+     * 设置的阈值是否大于 [THRESHOLD_UPPER_LIMIT]
+     */
+    private fun moreThanUpperLimit(limit: Int, vararg args: Int?): Boolean {
         for (i in args) {
-            if (i > Int.MAX_VALUE) {
-                return true
+            if (i != null) {
+                if (i > limit) {
+                    return true
+                }
             }
         }
         return false
+    }
+
+    /**
+     * 判断是否都为 null
+     */
+    private fun isAllNull(vararg args: Int?): Boolean {
+        var allNull = true
+        for (arg in args) {
+            if (arg != null) {
+                allNull = false
+                break
+            }
+        }
+        return allNull
+    }
+
+    /**
+     * 比较两个 Int?
+     * 如果 this >= that，return true
+     */
+    private fun Int?.jge(that: Int?): Boolean {
+        return if (this == null || that == null) {
+            false
+        } else {
+            this >= that
+        }
     }
 
     /**
@@ -34,13 +72,16 @@ object GlobalConfig {
         val i = pluginConfig.infoThreshold
         val w = pluginConfig.warnThreshold
         val e = pluginConfig.errorThreshold
+        if (isAllNull(i, w, e)) {
+            throw RuntimeException("项目 ${project.name} 中需要设置任意一个耗时阈值")
+        }
         if (lessThanZero(i, w, e)) {
-            throw RuntimeException("项目 ${project.name} 中方法耗时监测插件的设置阈值不能小于 0")
+            throw RuntimeException("项目 ${project.name} 中方法耗时监测插件的设置阈值需要大于 0")
         }
-        if (moreThanIntMax(i, w, e)) {
-            throw RuntimeException("项目 ${project.name} 中方法耗时监测插件的设置阈值不能大于 Int.MAX_VALUE")
+        if (moreThanUpperLimit(THRESHOLD_UPPER_LIMIT, i, w, e)) {
+            throw RuntimeException("项目 ${project.name} 中方法耗时监测插件的设置阈值不能大于 $THRESHOLD_UPPER_LIMIT")
         }
-        if (i > w || i > e || w > e) {
+        if (i.jge(w) || i.jge(e) || w.jge(e)) {
             throw RuntimeException("项目 ${project.name} 中方法耗时监测插件的设置阈值请保证 info < warn < error")
         }
     }

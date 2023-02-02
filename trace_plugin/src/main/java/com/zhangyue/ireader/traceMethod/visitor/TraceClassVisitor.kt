@@ -35,7 +35,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
     /**
      * 是否包含执行插桩注解
      */
-    private var hasExecutorAnnotation = false;
+    private var hasExecutorAnnotation = false
 
     override fun visit(
         version: Int,
@@ -68,7 +68,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
 
     private fun inSetUpPkgList(className: String): Boolean {
         val tempName = className.replace(SEPARATOR, DOT)
-        val isInPkgList = GlobalConfig.pluginConfig.pkgList.contains(tempName) { init, it ->
+        val isInPkgList = GlobalConfig.pluginConfig.pkgList.startWith(tempName) { init, it ->
             init.startsWith(it)
         }
         return isInPkgList.also {
@@ -79,7 +79,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
     }
 
 
-    private inline fun <T : CharSequence> Iterable<T>.contains(
+    private inline fun <T : CharSequence> Iterable<T>.startWith(
         init: T,
         action: (init: T, T) -> Boolean
     ): Boolean {

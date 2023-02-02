@@ -31,10 +31,9 @@ class PluginEntry : Plugin<Project> {
 
     private fun applyProjectConfig(project: Project, config: TraceConfig) {
         GlobalConfig.pluginConfig = config
-        GlobalConfig.enableMethodTrace = config.pkgList.isNotEmpty()
         //检查插件中参数的设置
         checkPluginSet(project)
-        println("plugin config:$config,enableMethodTrace:${GlobalConfig.enableMethodTrace}")
+        println("plugin config -> $config")
         Logger.make(project, config)
     }
 }

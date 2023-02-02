@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.2",
-      "buildId": "2fhx4vmfxvetvhbleatcehla7a"
+      "buildId": "cu3gdt3ovjdibecqpjk2uwcvq4"
     }
   },
   "variants": [
@@ -38,11 +38,11 @@
         {
           "name": "method-trace-1.0.jar",
           "url": "method-trace-1.0.jar",
-          "size": 45680,
-          "sha512": "4882f1b3250653b4f4e4717d9b7cc9cf29899654963f63f7f59f1595f433e556082ae57bfc1e68ee5712b911fab5322c78ae9c53eaeaf1c39f08ccfd02fb56d2",
-          "sha256": "b7ee7c48e321e9e4b02dea584896028480e2e8d4551ec1220b9caa5351825180",
-          "sha1": "c3dc7ec22680592bb4fba793eebc3beb75d18408",
-          "md5": "92f5c264970d155f446e8e097aead4a3"
+          "size": 46247,
+          "sha512": "eb536810f33e3f890f7a62954f276a158e4294d6f31c799fe4265a50146e2fddf1d2918cf6f535b2f825fe6e4b45663b0d7e1f58ac953ce1e46153712580deff",
+          "sha256": "46f107c460d14ccc131fe7a4bab3d880731e827a2a0c12a2508a4e9f12678503",
+          "sha1": "5c52b14697cfe5a2b788cdcf34e003653513207c",
+          "md5": "b3d5c8c3f7c8c9f34051b422be75a760"
         }
       ]
     },
@@ -57,20 +57,6 @@
         "org.jetbrains.kotlin.platform.type": "jvm"
       },
       "dependencies": [
-        {
-          "group": "org.ow2.asm",
-          "module": "asm",
-          "version": {
-            "requires": "9.2"
-          }
-        },
-        {
-          "group": "org.ow2.asm",
-          "module": "asm-commons",
-          "version": {
-            "requires": "9.2"
-          }
-        },
         {
           "group": "com.android.tools.build",
           "module": "gradle",
@@ -90,11 +76,11 @@
         {
           "name": "method-trace-1.0.jar",
           "url": "method-trace-1.0.jar",
-          "size": 45680,
-          "sha512": "4882f1b3250653b4f4e4717d9b7cc9cf29899654963f63f7f59f1595f433e556082ae57bfc1e68ee5712b911fab5322c78ae9c53eaeaf1c39f08ccfd02fb56d2",
-          "sha256": "b7ee7c48e321e9e4b02dea584896028480e2e8d4551ec1220b9caa5351825180",
-          "sha1": "c3dc7ec22680592bb4fba793eebc3beb75d18408",
-          "md5": "92f5c264970d155f446e8e097aead4a3"
+          "size": 46247,
+          "sha512": "eb536810f33e3f890f7a62954f276a158e4294d6f31c799fe4265a50146e2fddf1d2918cf6f535b2f825fe6e4b45663b0d7e1f58ac953ce1e46153712580deff",
+          "sha256": "46f107c460d14ccc131fe7a4bab3d880731e827a2a0c12a2508a4e9f12678503",
+          "sha1": "5c52b14697cfe5a2b788cdcf34e003653513207c",
+          "md5": "b3d5c8c3f7c8c9f34051b422be75a760"
         }
       ]
     }

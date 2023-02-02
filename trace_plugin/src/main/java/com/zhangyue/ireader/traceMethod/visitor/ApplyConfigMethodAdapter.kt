@@ -32,12 +32,8 @@ class ApplyConfigMethodAdapter(
         Logger.info("-----> $name enter")
     }
 
-    private fun Int.ifZero(): Int {
-        return if (this == 0) {
-            Int.MAX_VALUE
-        } else {
-            this
-        }
+    private fun Int?.ifNull(): Int {
+        return this ?: Int.MAX_VALUE
     }
 
 
@@ -45,9 +41,9 @@ class ApplyConfigMethodAdapter(
         super.onMethodExit(opcode)
         Logger.info("-----> $name exit")
         val onlyCheckMain: Boolean = GlobalConfig.pluginConfig.checkOnlyMainThread
-        val info: Int = GlobalConfig.pluginConfig.infoThreshold.ifZero()
-        val warn: Int = GlobalConfig.pluginConfig.warnThreshold.ifZero()
-        val error: Int = GlobalConfig.pluginConfig.errorThreshold.ifZero()
+        val info: Int = GlobalConfig.pluginConfig.infoThreshold.ifNull()
+        val warn: Int = GlobalConfig.pluginConfig.warnThreshold.ifNull()
+        val error: Int = GlobalConfig.pluginConfig.errorThreshold.ifNull()
         val owner = APPLY_CONFIG_CLASS_NAME.replace(DOT, SEPARATOR)
         // load onlyCheckMain
         mv.visitLdcInsn(onlyCheckMain)
