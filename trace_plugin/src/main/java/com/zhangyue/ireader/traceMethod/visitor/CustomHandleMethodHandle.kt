@@ -1,9 +1,10 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.DOT
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.INTERFACE_METHOD_TRACE_HANDLE
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.METHOD_TRACE_CLASS_NAME
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.SEPARATOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.DOT
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.FILED_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.INTERFACE_METHOD_TRACE_HANDLE
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_CLASS_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.SEPARATOR
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.AdviceAdapter
@@ -40,7 +41,7 @@ class CustomHandleMethodHandle(
         mv.visitFieldInsn(
             Opcodes.PUTSTATIC,
             METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
-            "METHOD_TRACE_HANDLE",
+            FILED_NAME,
             "L${INTERFACE_METHOD_TRACE_HANDLE.replace(DOT, SEPARATOR)};"
         )
     }

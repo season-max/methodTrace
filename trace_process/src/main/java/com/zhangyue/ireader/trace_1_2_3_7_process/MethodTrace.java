@@ -3,23 +3,24 @@ package com.zhangyue.ireader.trace_1_2_3_7_process;
 import androidx.annotation.Keep;
 
 import com.zhangyue.ireader.trace_1_2_3_7_process.handle.IMethodTraceHandle;
-import com.zhangyue.ireader.trace_1_2_3_7_process.handle.MethodTraceHandle;
+import com.zhangyue.ireader.trace_1_2_3_7_process.handle.SampleMethodTraceHandle;
 
 @Keep
 public class MethodTrace {
 
-    private static final IMethodTraceHandle METHOD_TRACE_HANDLE = new MethodTraceHandle();
+    private static final IMethodTraceHandle METHOD_TRACE_HANDLE = new SampleMethodTraceHandle();
 
     static {
+        //应用插件配置
         MethodTraceConfigKt.applyConfig();
     }
 
-    public static void onMethodEnter() {
-        METHOD_TRACE_HANDLE.onMethodEnter();
+    public static void onMethodEnter(Object object, String className, String methodName, String args) {
+        METHOD_TRACE_HANDLE.onMethodEnter(object, className, methodName, args);
     }
 
-    public static void onMethodExit(String str) {
-        METHOD_TRACE_HANDLE.onMethodExit(str);
+    public static void onMethodExit(Object object, String className, String methodName, String args) {
+        METHOD_TRACE_HANDLE.onMethodExit(object, className, methodName, args);
     }
 
 }

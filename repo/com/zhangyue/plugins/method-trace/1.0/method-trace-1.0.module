@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.2",
-      "buildId": "cu3gdt3ovjdibecqpjk2uwcvq4"
+      "buildId": "qzdafzdwgjbvjhuoihncdrgr3m"
     }
   },
   "variants": [
@@ -38,11 +38,11 @@
         {
           "name": "method-trace-1.0.jar",
           "url": "method-trace-1.0.jar",
-          "size": 46247,
-          "sha512": "eb536810f33e3f890f7a62954f276a158e4294d6f31c799fe4265a50146e2fddf1d2918cf6f535b2f825fe6e4b45663b0d7e1f58ac953ce1e46153712580deff",
-          "sha256": "46f107c460d14ccc131fe7a4bab3d880731e827a2a0c12a2508a4e9f12678503",
-          "sha1": "5c52b14697cfe5a2b788cdcf34e003653513207c",
-          "md5": "b3d5c8c3f7c8c9f34051b422be75a760"
+          "size": 46761,
+          "sha512": "d5ac7b0874711eb8a275376e33a050518f01c6d558d644b8ed6c3fbd7be1cdc63ec56dbd602ab11daf97168dece11e5e4cd25c2411b00f35de8fa96f11a1b730",
+          "sha256": "98d7f25cfd3573b66f8fa11c3c8ceaee7d6145a545baeab886a8247859d371d9",
+          "sha1": "6cbea68b6a3741622c57e25366f76c5ba5b3bdc2",
+          "md5": "6d5af68aad28ebdfda4153da5ee5d031"
         }
       ]
     },
@@ -76,11 +76,11 @@
         {
           "name": "method-trace-1.0.jar",
           "url": "method-trace-1.0.jar",
-          "size": 46247,
-          "sha512": "eb536810f33e3f890f7a62954f276a158e4294d6f31c799fe4265a50146e2fddf1d2918cf6f535b2f825fe6e4b45663b0d7e1f58ac953ce1e46153712580deff",
-          "sha256": "46f107c460d14ccc131fe7a4bab3d880731e827a2a0c12a2508a4e9f12678503",
-          "sha1": "5c52b14697cfe5a2b788cdcf34e003653513207c",
-          "md5": "b3d5c8c3f7c8c9f34051b422be75a760"
+          "size": 46761,
+          "sha512": "d5ac7b0874711eb8a275376e33a050518f01c6d558d644b8ed6c3fbd7be1cdc63ec56dbd602ab11daf97168dece11e5e4cd25c2411b00f35de8fa96f11a1b730",
+          "sha256": "98d7f25cfd3573b66f8fa11c3c8ceaee7d6145a545baeab886a8247859d371d9",
+          "sha1": "6cbea68b6a3741622c57e25366f76c5ba5b3bdc2",
+          "md5": "6d5af68aad28ebdfda4153da5ee5d031"
         }
       ]
     }

@@ -1,11 +1,11 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.DOT
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.METHOD_TRACE_CLASS_NAME
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.METHOD_TRACE_ENTER
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.METHOD_TRACE_EXIT
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.METHOD_TRACE_PARTITION
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.SEPARATOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.DOT
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_CLASS_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_ENTER_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_EXIT_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_PARTITION
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.SEPARATOR
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.AdviceAdapter
@@ -32,7 +32,7 @@ class TraceMethodAdapter(
         mv.visitMethodInsn(
             Opcodes.INVOKESTATIC,
             METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
-            METHOD_TRACE_ENTER,
+            METHOD_TRACE_ENTER_NAME,
             "()V",
             false
         )
@@ -44,7 +44,7 @@ class TraceMethodAdapter(
         mv.visitMethodInsn(
             Opcodes.INVOKESTATIC,
             METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
-            METHOD_TRACE_EXIT,
+            METHOD_TRACE_EXIT_NAME,
             "(Ljava/lang/String;)V",
             false
         )

@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import org.objectweb.asm.Opcodes
 
 
-class MethodTraceFirstTranceTransform(project: Project) : BaseTransform(project) {
+class FirstTranceTransform(project: Project) : BaseTransform(project) {
 
     private var startTime: Long = 0
 
@@ -22,15 +22,15 @@ class MethodTraceFirstTranceTransform(project: Project) : BaseTransform(project)
     }
 
 
-    override fun transformClassInner(name: String, sourceBytes: ByteArray): ByteArray {
+    override fun onTransform(className: String, bytes: ByteArray): ByteArray {
         val transforms =
             listOf(
                 CustomHandleTransform(),
                 ApplyConfigTransform(),
                 MethodTraceTransform()
             )
-        return transforms.fold(sourceBytes) { a, b ->
-            b.onTransform(name, a)
+        return transforms.fold(bytes) { b, t ->
+            t.onTransform(className, b)
         }
     }
 
@@ -61,8 +61,12 @@ class MethodTraceFirstTranceTransform(project: Project) : BaseTransform(project)
          * 耗时处理类
          */
         const val METHOD_TRACE_CLASS_NAME = "$TRACE_METHOD_PROCESS_PACKAGE.MethodTrace"
-        const val METHOD_TRACE_ENTER = "onMethodEnter"
-        const val METHOD_TRACE_EXIT = "onMethodExit"
+        val METHOD_TRACE_CLASS_DESCRIPTOR = "L$TRACE_METHOD_PROCESS_PACKAGE.MethodTrace;".replace(
+            DOT, SEPARATOR
+        )
+        const val FILED_NAME = "METHOD_TRACE_HANDLE"
+        const val METHOD_TRACE_ENTER_NAME = "onMethodEnter"
+        const val METHOD_TRACE_EXIT_NAME = "onMethodExit"
 
         /**
          * 类全限定名、方法名 分割符
@@ -74,6 +78,9 @@ class MethodTraceFirstTranceTransform(project: Project) : BaseTransform(project)
          */
         const val INTERFACE_METHOD_TRACE_HANDLE =
             "$TRACE_METHOD_PROCESS_PACKAGE.handle.IMethodTraceHandle"
+        val INTERFACE_METHOD_TRACE_HANDLE_DESCRIPTOR = "L$INTERFACE_METHOD_TRACE_HANDLE;".replace(
+            DOT, SEPARATOR
+        )
 
         /**
          * 忽略插桩注解

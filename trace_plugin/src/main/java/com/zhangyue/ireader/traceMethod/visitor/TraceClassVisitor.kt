@@ -1,11 +1,11 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
 import com.zhangyue.ireader.traceMethod.GlobalConfig
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.DOT
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.EXECUTOR_ANNOTATION_DESCRIPTOR
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.IGNORE_ANNOTATION_DESCRIPTOR
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.TRACE_METHOD_PROCESS_PACKAGE
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.SEPARATOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.DOT
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.EXECUTOR_ANNOTATION_DESCRIPTOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.IGNORE_ANNOTATION_DESCRIPTOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.TRACE_METHOD_PROCESS_PACKAGE
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.SEPARATOR
 import com.zhangyue.ireader.traceMethod.utils.Logger
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
@@ -17,9 +17,9 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
     lateinit var className: String
 
     /**
-     *
+     * 是否匹配设置的包名路径
      */
-    private var isInPkgList = false
+    private var isInSetupPathList = false
 
     /**
      * 是否是插件内部的 package
@@ -47,7 +47,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
     ) {
         super.visit(version, access, name, signature, superName, interfaces)
         className = name ?: "UNKNOWN"
-        isInPkgList = inSetUpPkgList(className)
+        isInSetupPathList = inSetUpPathList(className)
         isInPluginPkg = inPluginPkg(className)
     }
 
@@ -66,7 +66,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         )
     }
 
-    private fun inSetUpPkgList(className: String): Boolean {
+    private fun inSetUpPathList(className: String): Boolean {
         val tempName = className.replace(SEPARATOR, DOT)
         val isInPkgList = GlobalConfig.pluginConfig.pkgList.startWith(tempName) { init, it ->
             init.startsWith(it)
@@ -115,7 +115,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         if (isInPluginPkg) {
             return mv
         }
-        return if (isInPkgList || hasExecutorAnnotation) {
+        return if (isInSetupPathList || hasExecutorAnnotation) {
             Logger.info("trace method $className --> $name")
             TraceMethodAdapter(className, api, mv, access, name, descriptor)
         } else {

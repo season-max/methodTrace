@@ -6,13 +6,13 @@ apply plugin: 'method-trace-plugin'
 trace_config {
     printlnLog = true
     pkgList = ['com.zhangyue.ireader.methodtrace']
-    checkOnlyMainThread = false
+    checkOnlyMainThread = true
     //保证 info < warn < error,
     // 如果阈值未设置，不会输出对应的 log 等级的日志
     errorThreshold = 50
     warnThreshold = 30
     infoThreshold = 10
-    customHandle = "com.zhangyue.ireader.methodtrace.MyMethodTraceHandle"
+//    customHandle = "com.zhangyue.ireader.methodtrace.MyMethodTraceHandle"
 }
 
 android {

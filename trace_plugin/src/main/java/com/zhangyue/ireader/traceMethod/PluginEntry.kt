@@ -3,7 +3,7 @@ package com.zhangyue.ireader.traceMethod
 import com.android.build.gradle.AppExtension
 import com.android.build.gradle.AppPlugin
 import com.zhangyue.ireader.traceMethod.GlobalConfig.checkPluginSet
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform
 import com.zhangyue.ireader.traceMethod.utils.Logger
 import org.gradle.api.Plugin
 import org.gradle.api.Project
@@ -19,7 +19,7 @@ class PluginEntry : Plugin<Project> {
         val config = project.extensions.create("trace_config", TraceConfig::class.java)
         if (isAndroid) {
             project.extensions.getByType(AppExtension::class.java).apply {
-                registerTransform(MethodTraceFirstTranceTransform(project))
+                registerTransform(FirstTranceTransform(project))
             }
             project.afterEvaluate {
                 applyProjectConfig(project, config)

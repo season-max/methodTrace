@@ -14,7 +14,7 @@ class MethodTraceTransform : TransformListener {
             classReader,
             ClassWriter.COMPUTE_MAXS //自动计算栈深和局部变量表大小
         )
-        val cv = TraceClassVisitor(MethodTraceFirstTranceTransform.ASM_API, classWriter)
+        val cv = TraceClassVisitor(FirstTranceTransform.ASM_API, classWriter)
         classReader.accept(cv, ClassReader.EXPAND_FRAMES)
         return classWriter.toByteArray()
     }

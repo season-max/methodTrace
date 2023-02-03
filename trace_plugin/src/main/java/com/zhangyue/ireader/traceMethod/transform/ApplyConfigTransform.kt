@@ -1,6 +1,6 @@
 package com.zhangyue.ireader.traceMethod.transform
 
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.APPLY_CONFIG_CLASS_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.APPLY_CONFIG_CLASS_NAME
 import com.zhangyue.ireader.traceMethod.visitor.ApplyConfigClassVisitor
 import org.objectweb.asm.ClassReader
 import org.objectweb.asm.ClassWriter
@@ -16,7 +16,7 @@ class ApplyConfigTransform : TransformListener {
                 classReader,
                 ClassWriter.COMPUTE_MAXS //自动计算栈深和局部变量表大小
             )
-            val cv = ApplyConfigClassVisitor(MethodTraceFirstTranceTransform.ASM_API, classWriter)
+            val cv = ApplyConfigClassVisitor(FirstTranceTransform.ASM_API, classWriter)
             classReader.accept(cv, ClassReader.EXPAND_FRAMES)
             classWriter.toByteArray()
         } else {

@@ -21,7 +21,7 @@ import java.util.jar.JarOutputStream
 /**
  * 基础 transform ，执行遍历 class 文件的逻辑
  */
-abstract class BaseTransform(val project: Project) : Transform() {
+abstract class BaseTransform(val project: Project) : Transform(), TransformListener {
 
     private val service: AbstractExecutorService = ForkJoinPool.commonPool()
 
@@ -153,15 +153,13 @@ abstract class BaseTransform(val project: Project) : Transform() {
     private fun transformClass(className: String, sourceBytes: ByteArray): ByteArray? {
         var bytes: ByteArray?
         try {
-            bytes = transformClassInner(className, sourceBytes)
+            bytes = onTransform(className, sourceBytes)
         } catch (e: Throwable) {
             bytes = sourceBytes
             Logger.error("throw exception when modify class $className}")
         }
         return bytes
     }
-
-    abstract fun transformClassInner(name: String, sourceBytes: ByteArray): ByteArray?
 
     private fun forEachJar(
         jarInput: JarInput,

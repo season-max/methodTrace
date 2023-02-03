@@ -1,10 +1,17 @@
 package com.zhangyue.ireader.traceMethod.transform
 
 import com.zhangyue.ireader.traceMethod.GlobalConfig
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.ASM_API
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.DOT
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.METHOD_TRACE_CLASS_NAME
-import com.zhangyue.ireader.traceMethod.transform.MethodTraceFirstTranceTransform.Companion.SEPARATOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.APPLY_CONFIG_CLASS_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.ASM_API
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.DOT
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.FILED_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.INTERFACE_METHOD_TRACE_HANDLE
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.INTERFACE_METHOD_TRACE_HANDLE_DESCRIPTOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_CLASS_DESCRIPTOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_CLASS_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_ENTER_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_EXIT_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.SEPARATOR
 import com.zhangyue.ireader.traceMethod.utils.Logger
 import com.zhangyue.ireader.traceMethod.visitor.CustomHandleClassVisitor
 import org.objectweb.asm.*
@@ -18,11 +25,9 @@ import org.objectweb.asm.Opcodes.*
 class CustomHandleTransform : TransformListener {
     override fun onTransform(className: String, bytes: ByteArray): ByteArray {
         return if (className == METHOD_TRACE_CLASS_NAME) {
-            val hasSetCustomHandleMethodTrace = GlobalConfig.pluginConfig.customHandle.let {
-                it != null && it.isNotEmpty()
-            }
-            Logger.info("set custom method trance handle:$hasSetCustomHandleMethodTrace")
-            if (hasSetCustomHandleMethodTrace) {
+            val setCustomInterface = GlobalConfig.pluginConfig.customHandle?.isNotEmpty() ?: false
+            Logger.info("set custom method trance handle:$setCustomInterface")
+            if (setCustomInterface) {
                 //有两种处理方案。
                 // 1 是替换接口对应的实例
                 // 2 是重新生成一份 [com.zhangyue.ireader.trace_1_2_3_7_process.MethodTrace] 对应的 class 文件
@@ -53,7 +58,7 @@ class CustomHandleTransform : TransformListener {
     }
 
     companion object {
-        const val USE_IMPL_WAY_ONE = false
+        const val USE_IMPL_WAY_ONE = true
         private fun dump(customImpl: String): ByteArray {
             val classWriter = ClassWriter(0)
             val fieldVisitor: FieldVisitor
@@ -64,7 +69,7 @@ class CustomHandleTransform : TransformListener {
             classWriter.visit(
                 V1_8,
                 ACC_PUBLIC or ACC_SUPER,
-                "com/zhangyue/ireader/trace_1_2_3_7_process/MethodTrace",
+                METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
                 null,
                 "java/lang/Object",
                 null
@@ -84,8 +89,8 @@ class CustomHandleTransform : TransformListener {
             run {
                 fieldVisitor = classWriter.visitField(
                     ACC_PRIVATE or ACC_FINAL or ACC_STATIC,
-                    "METHOD_TRACE_HANDLE",
-                    "Lcom/zhangyue/ireader/trace_1_2_3_7_process/handle/IMethodTraceHandle;",
+                    FILED_NAME,
+                    INTERFACE_METHOD_TRACE_HANDLE_DESCRIPTOR,
                     null,
                     null
                 )
@@ -112,7 +117,7 @@ class CustomHandleTransform : TransformListener {
                 methodVisitor.visitLabel(label1)
                 methodVisitor.visitLocalVariable(
                     "this",
-                    "Lcom/zhangyue/ireader/trace_1_2_3_7_process/MethodTrace;",
+                    METHOD_TRACE_CLASS_DESCRIPTOR,
                     null,
                     label0,
                     label1,
@@ -126,7 +131,7 @@ class CustomHandleTransform : TransformListener {
             run {
                 methodVisitor = classWriter.visitMethod(
                     ACC_PUBLIC or ACC_STATIC,
-                    "onMethodEnter",
+                    METHOD_TRACE_ENTER_NAME,
                     "()V",
                     null,
                     null
@@ -137,14 +142,14 @@ class CustomHandleTransform : TransformListener {
                 methodVisitor.visitLineNumber(18, label0)
                 methodVisitor.visitFieldInsn(
                     GETSTATIC,
-                    "com/zhangyue/ireader/trace_1_2_3_7_process/MethodTrace",
-                    "METHOD_TRACE_HANDLE",
-                    "Lcom/zhangyue/ireader/trace_1_2_3_7_process/handle/IMethodTraceHandle;"
+                    METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
+                    FILED_NAME,
+                    INTERFACE_METHOD_TRACE_HANDLE_DESCRIPTOR
                 )
                 methodVisitor.visitMethodInsn(
                     INVOKEINTERFACE,
-                    "com/zhangyue/ireader/trace_1_2_3_7_process/handle/IMethodTraceHandle",
-                    "onMethodEnter",
+                    INTERFACE_METHOD_TRACE_HANDLE.replace(DOT, SEPARATOR),
+                    METHOD_TRACE_ENTER_NAME,
                     "()V",
                     true
                 )
@@ -160,7 +165,7 @@ class CustomHandleTransform : TransformListener {
             run {
                 methodVisitor = classWriter.visitMethod(
                     ACC_PUBLIC or ACC_STATIC,
-                    "onMethodExit",
+                    METHOD_TRACE_EXIT_NAME,
                     "(Ljava/lang/String;)V",
                     null,
                     null
@@ -171,15 +176,15 @@ class CustomHandleTransform : TransformListener {
                 methodVisitor.visitLineNumber(22, label0)
                 methodVisitor.visitFieldInsn(
                     GETSTATIC,
-                    "com/zhangyue/ireader/trace_1_2_3_7_process/MethodTrace",
-                    "METHOD_TRACE_HANDLE",
-                    "Lcom/zhangyue/ireader/trace_1_2_3_7_process/handle/IMethodTraceHandle;"
+                    METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
+                    FILED_NAME,
+                    INTERFACE_METHOD_TRACE_HANDLE_DESCRIPTOR
                 )
                 methodVisitor.visitVarInsn(ALOAD, 0)
                 methodVisitor.visitMethodInsn(
                     INVOKEINTERFACE,
-                    "com/zhangyue/ireader/trace_1_2_3_7_process/handle/IMethodTraceHandle",
-                    "onMethodExit",
+                    INTERFACE_METHOD_TRACE_HANDLE.replace(DOT, SEPARATOR),
+                    METHOD_TRACE_EXIT_NAME,
                     "(Ljava/lang/String;)V",
                     true
                 )
@@ -210,13 +215,11 @@ class CustomHandleTransform : TransformListener {
                 methodVisitor.visitLineNumber(11, label0)
                 methodVisitor.visitTypeInsn(
                     NEW,
-//                    "com/zhangyue/ireader/trace_1_2_3_7_process/handle/MethodTraceHandle"
                     customImpl.replace(DOT, SEPARATOR)
                 )
                 methodVisitor.visitInsn(DUP)
                 methodVisitor.visitMethodInsn(
                     INVOKESPECIAL,
-//                    "com/zhangyue/ireader/trace_1_2_3_7_process/handle/MethodTraceHandle",
                     customImpl.replace(DOT, SEPARATOR),
                     "<init>",
                     "()V",
@@ -224,16 +227,16 @@ class CustomHandleTransform : TransformListener {
                 )
                 methodVisitor.visitFieldInsn(
                     PUTSTATIC,
-                    "com/zhangyue/ireader/trace_1_2_3_7_process/MethodTrace",
-                    "METHOD_TRACE_HANDLE",
-                    "Lcom/zhangyue/ireader/trace_1_2_3_7_process/handle/IMethodTraceHandle;"
+                    METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
+                    FILED_NAME,
+                    INTERFACE_METHOD_TRACE_HANDLE_DESCRIPTOR
                 )
                 val label1 = Label()
                 methodVisitor.visitLabel(label1)
                 methodVisitor.visitLineNumber(14, label1)
                 methodVisitor.visitMethodInsn(
                     INVOKESTATIC,
-                    "com/zhangyue/ireader/trace_1_2_3_7_process/MethodTraceConfigKt",
+                    APPLY_CONFIG_CLASS_NAME.replace(DOT, SEPARATOR),
                     "applyConfig",
                     "()V",
                     false
