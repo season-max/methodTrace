@@ -12,15 +12,27 @@ interface IMethodTraceHandle {
 
     /**
      * 方法入口
-     * className + methodName + args 作为一个方法的 key
+     * className + methodName + args + returnType 作为一个方法的 key
      *
      */
-    fun onMethodEnter(any: Any, className: String, methodName: String, args: String)
+    fun onMethodEnter(
+        any: Any,
+        className: String,
+        methodName: String,
+        args: String,
+        returnType: String
+    )
 
     /**
      * 方法出口
-     * className + methodName + args 作为一个方法的 key
+     * className + methodName + args + returnType 作为一个方法的 key
      */
-    fun onMethodExit(any: Any, className: String, methodName: String, args: String)
+    fun onMethodExit(
+        any: Any,
+        className: String,
+        methodName: String,
+        args: String,
+        returnType: String
+    )
 
 }

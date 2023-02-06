@@ -6,17 +6,31 @@ import com.zhangyue.ireader.trace_1_2_3_7_process.annotation.IgnoreMethodTrace
 import com.zhangyue.ireader.trace_1_2_3_7_process.handle.IMethodTraceHandle
 
 /**
- * 自定义日志输出
+ * @author yaoxinixn
+ * 对方法入口、出口的逻辑自定义处理
+ *
  * 需要添加 [IgnoreMethodTrace] 注解
  */
 @Keep
 @IgnoreMethodTrace
 class MyMethodTraceHandle : IMethodTraceHandle {
-    override fun onMethodEnter() {
-        Log.e("method_trace_handle", "onMethodEnter")
+    override fun onMethodEnter(
+        any: Any,
+        className: String,
+        methodName: String,
+        args: String,
+        returnType: String
+    ) {
+        Log.e("method_trace_handle", "-------> onMethodEnter")
     }
 
-    override fun onMethodExit(str: String) {
-        Log.e("method_trace_handle", "onMethodExit --> $str")
+    override fun onMethodExit(
+        any: Any,
+        className: String,
+        methodName: String,
+        args: String,
+        returnType: String
+    ) {
+        Log.e("method_trace_handle", "-------> onMethodExit")
     }
 }

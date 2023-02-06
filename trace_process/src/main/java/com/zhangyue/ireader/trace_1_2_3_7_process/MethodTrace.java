@@ -15,12 +15,12 @@ public class MethodTrace {
         MethodTraceConfigKt.applyConfig();
     }
 
-    public static void onMethodEnter(Object object, String className, String methodName, String args) {
-        METHOD_TRACE_HANDLE.onMethodEnter(object, className, methodName, args);
+    public static void onMethodEnter(Object object, String className, String methodName, String args, String returnType) {
+        METHOD_TRACE_HANDLE.onMethodEnter(object, className, methodName, args, returnType);
     }
 
-    public static void onMethodExit(Object object, String className, String methodName, String args) {
-        METHOD_TRACE_HANDLE.onMethodExit(object, className, methodName, args);
+    public static void onMethodExit(Object object, String className, String methodName, String args, String returnType) {
+        METHOD_TRACE_HANDLE.onMethodExit(object, className, methodName, args, returnType);
     }
 
 }

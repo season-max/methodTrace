@@ -64,14 +64,14 @@ class FirstTranceTransform(project: Project) : BaseTransform(project) {
         val METHOD_TRACE_CLASS_DESCRIPTOR = "L$TRACE_METHOD_PROCESS_PACKAGE.MethodTrace;".replace(
             DOT, SEPARATOR
         )
+        //字段名称
         const val FILED_NAME = "METHOD_TRACE_HANDLE"
+        //方法入口
         const val METHOD_TRACE_ENTER_NAME = "onMethodEnter"
+        const val METHOD_TRACE_ENTER_DESCRIPTOR = ""
+        //方法出口
         const val METHOD_TRACE_EXIT_NAME = "onMethodExit"
-
-        /**
-         * 类全限定名、方法名 分割符
-         */
-        const val METHOD_TRACE_PARTITION = "$"
+        const val METHOD_TRACE_EXIT_DESCRIPTOR = ""
 
         /**
          * 方法耗时处理接口

@@ -46,16 +46,16 @@ class ApplyConfigMethodAdapter(
         val error: Int = GlobalConfig.pluginConfig.errorThreshold.ifNull()
         val owner = APPLY_CONFIG_CLASS_NAME.replace(DOT, SEPARATOR)
         // load onlyCheckMain
-        mv.visitLdcInsn(onlyCheckMain)
+        push(onlyCheckMain)
         mv.visitVarInsn(Opcodes.ISTORE, 0)
         // load info
-        mv.visitLdcInsn(info)
+        push(info)
         mv.visitVarInsn(Opcodes.ISTORE, 1)
         // load warn
-        mv.visitLdcInsn(warn)
+        push(warn)
         mv.visitVarInsn(Opcodes.ISTORE, 2)
         // load error
-        mv.visitLdcInsn(error)
+        push(error)
         mv.visitVarInsn(Opcodes.ISTORE, 3)
         // put field
         mv.visitVarInsn(Opcodes.ILOAD, 0)

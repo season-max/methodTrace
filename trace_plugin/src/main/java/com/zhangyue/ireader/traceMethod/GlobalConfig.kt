@@ -9,10 +9,10 @@ object GlobalConfig {
     /**
      * 设置上限 50s
      */
-    private const val THRESHOLD_UPPER_LIMIT = 50_000
+    private const val THRESHOLD_UPPER_LIMIT = Int.MAX_VALUE
 
     /**
-     * return arg <= 0
+     * return if arg <= 0
      */
     private fun lessThanZero(vararg args: Int?): Boolean {
         for (i in args) {

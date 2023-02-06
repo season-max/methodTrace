@@ -4,6 +4,7 @@ import android.os.Looper
 import android.os.SystemClock
 import android.util.Log
 import com.zhangyue.ireader.trace_1_2_3_7_process.*
+import java.util.concurrent.atomic.AtomicInteger
 
 class SampleMethodTraceHandle : IMethodTraceHandle {
 
@@ -17,28 +18,43 @@ class SampleMethodTraceHandle : IMethodTraceHandle {
     }
 
     /**
-     *
+     * @param enterTime 方法入口时间戳
+     * @param recursion 用来处理递归调用
      */
-    class Addition(val enterTime: Long) {
+    class Addition(val enterTime: Long, val recursion: AtomicInteger = AtomicInteger(0))
 
-    }
-
-    /**
-     *
-     */
-    // TODO: 如何解决迭代问题
-    override fun onMethodEnter(any: Any, className: String, methodName: String, args: String) {
+    override fun onMethodEnter(
+        any: Any,
+        className: String,
+        methodName: String,
+        args: String,
+        returnType: String
+    ) {
         val enterTime = SystemClock.elapsedRealtime()
-        val key = className + methodName + args
+        val key = className + methodName + args + returnType
         val map = threadLocal.get()?.toMutableMap() ?: HashMap()
-        map[key] = Addition(enterTime)
+        if (map[key] == null) {
+            map[key] = Addition(enterTime)
+        }
+        map[key]!!.recursion.incrementAndGet()
     }
 
-    override fun onMethodExit(any: Any, className: String, methodName: String, args: String) {
+    override fun onMethodExit(
+        any: Any,
+        className: String,
+        methodName: String,
+        args: String,
+        returnType: String
+    ) {
         val exitTime = SystemClock.elapsedRealtime()
-        val key = className + methodName + args
+        val key = className + methodName + args + returnType
         val map = threadLocal.get() ?: return
-        val enterTime = map[key]?.enterTime ?: return
+        val ato = map[key] ?: return
+        //递归调用，处理最外层调用
+        if (ato.recursion.decrementAndGet() > 0) {
+            return
+        }
+        val enterTime = ato.enterTime
         if (enterTime <= 0) {
             return
         }

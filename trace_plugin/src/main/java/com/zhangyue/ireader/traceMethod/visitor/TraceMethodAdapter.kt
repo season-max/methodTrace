@@ -4,12 +4,15 @@ import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion
 import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_CLASS_NAME
 import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_ENTER_NAME
 import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_EXIT_NAME
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_PARTITION
 import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.SEPARATOR
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.AdviceAdapter
 
+/**
+ * 用来访问 [com.zhangyue.ireader.trace_1_2_3_7_process.MethodTrace] onMethodEnter 和 onMethodExit 方法
+ * @author yaoxinxin
+ */
 class TraceMethodAdapter(
     className: String,
     api: Int,
@@ -21,14 +24,29 @@ class TraceMethodAdapter(
 
     private var className: String
     private var methodName: String
+    private var init: Boolean = false
+    private var clinit: Boolean = false
+    private var static: Boolean = false
 
     init {
         this.className = className
         this.methodName = name
+        init = name == "<init>"
+        clinit = name == "<clinit>"
+        static = access and Opcodes.ACC_STATIC == Opcodes.ACC_STATIC
     }
 
     override fun onMethodEnter() {
         super.onMethodEnter()
+        if (static) {
+            mv.visitInsn(ACONST_NULL)
+        } else {
+            mv.visitVarInsn(ALOAD, 0)
+        }
+        mv.visitLdcInsn(className)
+        mv.visitLdcInsn(methodName)
+        mv.visitLdcInsn(args())
+        mv.visitLdcInsn(returns())
         mv.visitMethodInsn(
             Opcodes.INVOKESTATIC,
             METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
@@ -40,7 +58,6 @@ class TraceMethodAdapter(
 
     override fun onMethodExit(opcode: Int) {
         super.onMethodExit(opcode)
-        mv.visitLdcInsn(generateMethodName())
         mv.visitMethodInsn(
             Opcodes.INVOKESTATIC,
             METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
@@ -50,8 +67,14 @@ class TraceMethodAdapter(
         )
     }
 
-    private fun generateMethodName(): String {
-        return className.replace(SEPARATOR, DOT) + METHOD_TRACE_PARTITION + methodName
+    private fun args(): String {
+        val arg = argumentTypes
+
+        return ""
+    }
+
+    private fun returns(): String {
+        return ""
     }
 
 
