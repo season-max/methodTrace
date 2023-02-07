@@ -1,8 +1,11 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.COMMA
 import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.DOT
 import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_CLASS_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_ENTER_DESCRIPTOR
 import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_ENTER_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_EXIT_DESCRIPTOR
 import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_EXIT_NAME
 import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.SEPARATOR
 import org.objectweb.asm.MethodVisitor
@@ -51,31 +54,48 @@ class TraceMethodAdapter(
             Opcodes.INVOKESTATIC,
             METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
             METHOD_TRACE_ENTER_NAME,
-            "()V",
+            METHOD_TRACE_ENTER_DESCRIPTOR,
             false
         )
     }
 
     override fun onMethodExit(opcode: Int) {
         super.onMethodExit(opcode)
+        if (static) {
+            mv.visitInsn(ACONST_NULL)
+        } else {
+            mv.visitIntInsn(ALOAD, 0)
+        }
+        mv.visitLdcInsn(className)
+        mv.visitLdcInsn(methodName)
+        mv.visitLdcInsn(args())
+        mv.visitLdcInsn(returns())
         mv.visitMethodInsn(
             Opcodes.INVOKESTATIC,
             METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
             METHOD_TRACE_EXIT_NAME,
-            "(Ljava/lang/String;)V",
+            METHOD_TRACE_EXIT_DESCRIPTOR,
             false
         )
     }
 
     private fun args(): String {
-        val arg = argumentTypes
-
-        return ""
+        val arg = argumentTypes ?: return "[]"
+        val builder = StringBuilder()
+        builder.append("[")
+        for ((i, value) in arg.withIndex()) {
+            builder.append(value)
+            if (i != arg.size - 1) {
+                builder.append(COMMA)
+            }
+        }
+        builder.append("]")
+        return builder.toString()
     }
 
     private fun returns(): String {
-        return ""
+        val `return` = returnType ?: return "[]"
+        return `return`.className
     }
-
 
 }

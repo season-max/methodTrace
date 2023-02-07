@@ -41,6 +41,8 @@ class FirstTranceTransform(project: Project) : BaseTransform(project) {
 
         const val SEPARATOR = "/"
 
+        const val COMMA = ","
+
         /**
          * 方法耗时处理类所在的包名，该包名下的类都不进行插桩
          */
@@ -68,10 +70,10 @@ class FirstTranceTransform(project: Project) : BaseTransform(project) {
         const val FILED_NAME = "METHOD_TRACE_HANDLE"
         //方法入口
         const val METHOD_TRACE_ENTER_NAME = "onMethodEnter"
-        const val METHOD_TRACE_ENTER_DESCRIPTOR = ""
+        const val METHOD_TRACE_ENTER_DESCRIPTOR = "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
         //方法出口
         const val METHOD_TRACE_EXIT_NAME = "onMethodExit"
-        const val METHOD_TRACE_EXIT_DESCRIPTOR = ""
+        const val METHOD_TRACE_EXIT_DESCRIPTOR = METHOD_TRACE_ENTER_DESCRIPTOR
 
         /**
          * 方法耗时处理接口
