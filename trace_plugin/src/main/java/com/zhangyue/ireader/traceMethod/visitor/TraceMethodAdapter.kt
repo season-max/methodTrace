@@ -1,5 +1,6 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
+import com.zhangyue.ireader.traceMethod.printer.MethodInfo
 import com.zhangyue.ireader.traceMethod.printer.TraceMethodBean
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.COMMA
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.DOT
@@ -105,7 +106,7 @@ class TraceMethodAdapter(
 
     override fun visitEnd() {
         super.visitEnd()
-        bean.methodList.add(methodName)
+        bean.methodList.add(MethodInfo(methodName, args(), returns()))
     }
 
 }
