@@ -1,5 +1,6 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
+import com.zhangyue.ireader.traceMethod.printer.TraceMethodBean
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.COMMA
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.DOT
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.METHOD_TRACE_CLASS_NAME
@@ -22,7 +23,8 @@ class TraceMethodAdapter(
     mv: MethodVisitor,
     access: Int,
     name: String,
-    descriptor: String
+    descriptor: String,
+    traceMethodBean: TraceMethodBean
 ) : AdviceAdapter(api, mv, access, name, descriptor) {
 
     private var className: String
@@ -30,6 +32,7 @@ class TraceMethodAdapter(
     private var init: Boolean = false
     private var clinit: Boolean = false
     private var static: Boolean = false
+    private val bean: TraceMethodBean = traceMethodBean
 
     init {
         this.className = className.replace(SEPARATOR, DOT)
@@ -98,6 +101,11 @@ class TraceMethodAdapter(
     private fun returns(): String {
         val `return` = returnType ?: return "[]"
         return "[${`return`.className}]"
+    }
+
+    override fun visitEnd() {
+        super.visitEnd()
+        bean.methodList.add(methodName)
     }
 
 }

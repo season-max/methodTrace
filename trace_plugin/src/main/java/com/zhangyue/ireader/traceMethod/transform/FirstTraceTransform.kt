@@ -1,6 +1,7 @@
 package com.zhangyue.ireader.traceMethod.transform
 
 import com.android.build.api.transform.TransformInvocation
+import com.zhangyue.ireader.traceMethod.printer.TraceMethodManager
 import org.gradle.api.Project
 import org.objectweb.asm.Opcodes
 
@@ -19,6 +20,7 @@ class FirstTraceTransform(project: Project) : BaseTransform(project) {
 
     override fun onTransformEnd(transformInvocation: TransformInvocation) {
         println("$name end---------------> duration : ${System.currentTimeMillis() - startTime}")
+        TraceMethodManager.get().print(project)
     }
 
 
@@ -91,7 +93,7 @@ class FirstTraceTransform(project: Project) : BaseTransform(project) {
             "L$TRACE_METHOD_PROCESS_PACKAGE.annotation.IgnoreMethodTrace;".replace(DOT, SEPARATOR)
 
         val EXECUTOR_ANNOTATION_DESCRIPTOR =
-            "L$TRACE_METHOD_PROCESS_PACKAGE.annotation.ExecuteMethodTrace;".replace(DOT, SEPARATOR)
+            "L$TRACE_METHOD_PROCESS_PACKAGE.annotation.HookMethodTrace;".replace(DOT, SEPARATOR)
     }
 
 }

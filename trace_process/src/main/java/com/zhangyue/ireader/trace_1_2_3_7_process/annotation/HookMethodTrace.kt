@@ -5,4 +5,4 @@ package com.zhangyue.ireader.trace_1_2_3_7_process.annotation
  */
 @Target(AnnotationTarget.CLASS)
 @Retention(AnnotationRetention.BINARY)
-annotation class ExecuteMethodTrace
+annotation class HookMethodTrace

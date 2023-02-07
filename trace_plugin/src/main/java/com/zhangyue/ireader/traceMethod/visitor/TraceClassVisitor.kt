@@ -1,6 +1,8 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
 import com.zhangyue.ireader.traceMethod.GlobalConfig
+import com.zhangyue.ireader.traceMethod.printer.TraceMethodBean
+import com.zhangyue.ireader.traceMethod.printer.TraceMethodManager
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.DOT
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.EXECUTOR_ANNOTATION_DESCRIPTOR
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.IGNORE_ANNOTATION_DESCRIPTOR
@@ -37,6 +39,9 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
      */
     private var hasExecutorAnnotation = false
 
+
+    private val bean: TraceMethodBean = TraceMethodBean(className.replace(SEPARATOR, DOT))
+
     override fun visit(
         version: Int,
         access: Int,
@@ -52,10 +57,9 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
     }
 
     override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor {
-        if (descriptor == IGNORE_ANNOTATION_DESCRIPTOR) {
-            hasIgnoreAnnotation = true
-        } else if (descriptor == EXECUTOR_ANNOTATION_DESCRIPTOR) {
-            hasExecutorAnnotation = true
+        when (descriptor) {
+            IGNORE_ANNOTATION_DESCRIPTOR -> hasIgnoreAnnotation = true
+            EXECUTOR_ANNOTATION_DESCRIPTOR -> hasExecutorAnnotation = true
         }
         return super.visitAnnotation(descriptor, visible)
     }
@@ -107,7 +111,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         if (abstract) {
             return mv
         }
-        //方法上有忽略插桩的注解
+        // 有忽略插桩的注解
         if (hasIgnoreAnnotation) {
             return mv
         }
@@ -117,9 +121,20 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         }
         return if (isInSetupPathList || hasExecutorAnnotation) {
             Logger.info("trace method $className --> $name")
-            TraceMethodAdapter(className, api, mv, access, name, descriptor)
+            TraceMethodAdapter(
+                className, api, mv, access, name, descriptor, TraceMethodBean(
+                    className.replace(
+                        SEPARATOR, DOT
+                    )
+                )
+            )
         } else {
             mv
         }
+    }
+
+    override fun visitEnd() {
+        super.visitEnd()
+        TraceMethodManager.get().addItem(bean)
     }
 }
