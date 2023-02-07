@@ -1,10 +1,10 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.DOT
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.FILED_NAME
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.INTERFACE_METHOD_TRACE_HANDLE
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_CLASS_NAME
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.SEPARATOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.DOT
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.FILED_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.INTERFACE_METHOD_TRACE_HANDLE
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.METHOD_TRACE_CLASS_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.SEPARATOR
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.AdviceAdapter

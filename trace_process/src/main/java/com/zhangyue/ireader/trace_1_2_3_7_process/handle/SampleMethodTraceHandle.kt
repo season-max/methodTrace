@@ -12,49 +12,64 @@ class SampleMethodTraceHandle : IMethodTraceHandle {
 
         private const val TAG = "methodTrace"
 
+        private const val LINE =
+            "==================================================================================================="
+
         // 用来解决多线程同时访问同一个方法
         @JvmStatic
-        val threadLocal: ThreadLocal<Map<String, Addition>> = ThreadLocal()
+        val threadLocal: ThreadLocal<HashMap<String, Addition>> = ThreadLocal()
     }
 
     /**
      * @param enterTime 方法入口时间戳
      * @param recursion 用来处理递归调用
      */
-    class Addition(val enterTime: Long, val recursion: AtomicInteger = AtomicInteger(0))
+    class Addition(val enterTime: Long, val recursion: AtomicInteger = AtomicInteger(0)) {
+        override fun toString(): String {
+            return "Addition(enterTime=$enterTime, recursion=$recursion)"
+        }
+    }
 
     override fun onMethodEnter(
         any: Any,
-        className: String,
+        classNameFullName: String,
         methodName: String,
         args: String,
         returnType: String
     ) {
-        val enterTime = SystemClock.elapsedRealtime()
-        val key = className + methodName + args + returnType
-        val map = threadLocal.get()?.toMutableMap() ?: HashMap()
+        val enterTime = nowTime()
+        val key = classNameFullName + methodName + args + returnType
+        val map = threadLocal.get() ?: HashMap<String, Addition>().also {
+            threadLocal.set(it)
+        }
         if (map[key] == null) {
             map[key] = Addition(enterTime)
         }
         map[key]!!.recursion.incrementAndGet()
     }
 
+    private fun nowTime(): Long {
+        return SystemClock.elapsedRealtime()
+    }
+
     override fun onMethodExit(
         any: Any,
-        className: String,
+        classNameFullName: String,
         methodName: String,
         args: String,
         returnType: String
     ) {
-        val exitTime = SystemClock.elapsedRealtime()
-        val key = className + methodName + args + returnType
+        val exitTime = nowTime()
+        val key = classNameFullName + methodName + args + returnType
         val map = threadLocal.get() ?: return
-        val ato = map[key] ?: return
-        //递归调用，处理最外层调用
-        if (ato.recursion.decrementAndGet() > 0) {
+        val addition = map[key] ?: return
+        //递归调用，只处理最外层调用
+        if (addition.recursion.decrementAndGet() > 0) {
             return
         }
-        val enterTime = ato.enterTime
+        //remove 移除 key
+        map.remove(key)
+        val enterTime = addition.enterTime
         if (enterTime <= 0) {
             return
         }
@@ -65,22 +80,21 @@ class SampleMethodTraceHandle : IMethodTraceHandle {
             true
         }
         if (check) {
-            val info = saveSlowMethod(any, className, methodName, const)
             when {
                 const >= errorConstThreshold1 -> {
-                    Log.e(TAG, info)
+                    Log.e(TAG, printLog(any, classNameFullName, methodName, const))
                 }
                 const >= warnConstThreshold1 -> {
-                    Log.w(TAG, info)
+                    Log.w(TAG, printLog(any, classNameFullName, methodName, const))
                 }
                 const >= infoConstThreshold1 -> {
-                    Log.i(TAG, info)
+                    Log.i(TAG, printLog(any, classNameFullName, methodName, const))
                 }
             }
         }
     }
 
-    private fun saveSlowMethod(
+    private fun printLog(
         any: Any,
         fullClassName: String?,
         methodName: String?,
@@ -89,7 +103,8 @@ class SampleMethodTraceHandle : IMethodTraceHandle {
         val className = fullClassName?.substringAfterLast(".", "") ?: "null"
         val pkgName = fullClassName?.substringBeforeLast(".", "") ?: "null"
         return StringBuilder().apply {
-            append("\r\n")
+            append(LINE)
+                .append("\r\n")
                 .append("[this] : $any")
                 .append("\r\n")
                 .append("[pkgName] : $pkgName")
@@ -105,6 +120,7 @@ class SampleMethodTraceHandle : IMethodTraceHandle {
                 .append("[callStack] : ")
                 .append("\r\n")
                 .append(TraceUtils.getThreadStackTrace(Thread.currentThread()))
+                .append(LINE)
         }.toString()
     }
 }

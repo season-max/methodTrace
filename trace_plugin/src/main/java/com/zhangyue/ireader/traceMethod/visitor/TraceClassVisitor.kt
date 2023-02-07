@@ -1,11 +1,11 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
 import com.zhangyue.ireader.traceMethod.GlobalConfig
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.DOT
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.EXECUTOR_ANNOTATION_DESCRIPTOR
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.IGNORE_ANNOTATION_DESCRIPTOR
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.TRACE_METHOD_PROCESS_PACKAGE
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.SEPARATOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.DOT
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.EXECUTOR_ANNOTATION_DESCRIPTOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.IGNORE_ANNOTATION_DESCRIPTOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.TRACE_METHOD_PROCESS_PACKAGE
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.SEPARATOR
 import com.zhangyue.ireader.traceMethod.utils.Logger
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor

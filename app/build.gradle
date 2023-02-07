@@ -6,7 +6,7 @@ apply plugin: 'method-trace-plugin'
 trace_config {
     printlnLog = true
     pkgList = ['com.zhangyue.ireader.methodtrace']
-    checkOnlyMainThread = true
+    checkOnlyMainThread = false
     //保证 info < warn < error,
     // 如果阈值未设置，不会输出对应的 log 等级的日志
     errorThreshold = 50

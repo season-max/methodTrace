@@ -26,7 +26,7 @@ object TraceUtils {
             return "[]"
         }
         //跳过插件代码的堆栈
-        val skipFrameCount = 7
+        val skipFrameCount = 6
         //最多记录的堆栈
         val maxLineNumber = 15
         val stringBuilder = StringBuilder()

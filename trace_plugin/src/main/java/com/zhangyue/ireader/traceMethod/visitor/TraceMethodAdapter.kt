@@ -1,13 +1,13 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.COMMA
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.DOT
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_CLASS_NAME
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_ENTER_DESCRIPTOR
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_ENTER_NAME
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_EXIT_DESCRIPTOR
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.METHOD_TRACE_EXIT_NAME
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.SEPARATOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.COMMA
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.DOT
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.METHOD_TRACE_CLASS_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.METHOD_TRACE_ENTER_DESCRIPTOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.METHOD_TRACE_ENTER_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.METHOD_TRACE_EXIT_DESCRIPTOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.METHOD_TRACE_EXIT_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.SEPARATOR
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.AdviceAdapter
@@ -32,7 +32,7 @@ class TraceMethodAdapter(
     private var static: Boolean = false
 
     init {
-        this.className = className
+        this.className = className.replace(SEPARATOR, DOT)
         this.methodName = name
         init = name == "<init>"
         clinit = name == "<clinit>"
@@ -42,14 +42,15 @@ class TraceMethodAdapter(
     override fun onMethodEnter() {
         super.onMethodEnter()
         if (static) {
-            mv.visitInsn(ACONST_NULL)
+//            mv.visitInsn(ACONST_NULL)
+            push("null")
         } else {
             mv.visitVarInsn(ALOAD, 0)
         }
-        mv.visitLdcInsn(className)
-        mv.visitLdcInsn(methodName)
-        mv.visitLdcInsn(args())
-        mv.visitLdcInsn(returns())
+        push(className)
+        push(methodName)
+        push(args())
+        push(returns())
         mv.visitMethodInsn(
             Opcodes.INVOKESTATIC,
             METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
@@ -62,14 +63,15 @@ class TraceMethodAdapter(
     override fun onMethodExit(opcode: Int) {
         super.onMethodExit(opcode)
         if (static) {
-            mv.visitInsn(ACONST_NULL)
+//            mv.visitInsn(ACONST_NULL)
+            push("null")
         } else {
             mv.visitIntInsn(ALOAD, 0)
         }
-        mv.visitLdcInsn(className)
-        mv.visitLdcInsn(methodName)
-        mv.visitLdcInsn(args())
-        mv.visitLdcInsn(returns())
+        push(className)
+        push(methodName)
+        push(args())
+        push(returns())
         mv.visitMethodInsn(
             Opcodes.INVOKESTATIC,
             METHOD_TRACE_CLASS_NAME.replace(DOT, SEPARATOR),
@@ -95,7 +97,7 @@ class TraceMethodAdapter(
 
     private fun returns(): String {
         val `return` = returnType ?: return "[]"
-        return `return`.className
+        return "[${`return`.className}]"
     }
 
 }

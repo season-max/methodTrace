@@ -17,7 +17,7 @@ interface IMethodTraceHandle {
      */
     fun onMethodEnter(
         any: Any,
-        className: String,
+        classNameFullName: String,
         methodName: String,
         args: String,
         returnType: String
@@ -29,7 +29,7 @@ interface IMethodTraceHandle {
      */
     fun onMethodExit(
         any: Any,
-        className: String,
+        classNameFullName: String,
         methodName: String,
         args: String,
         returnType: String

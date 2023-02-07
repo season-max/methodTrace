@@ -1,6 +1,6 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.APPLY_CONFIG_METHOD_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.APPLY_CONFIG_METHOD_NAME
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
 

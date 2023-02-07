@@ -1,13 +1,13 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
 import com.zhangyue.ireader.traceMethod.GlobalConfig
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.APPLY_CONFIG_CLASS_NAME
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.APPLY_CONFIG_FIELD_ERROR_THRESHOLD
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.APPLY_CONFIG_FIELD_INFO_THRESHOLD
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.APPLY_CONFIG_FIELD_ONLY_CHECK_MAIN
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.APPLY_CONFIG_FIELD_WARN_THRESHOLD
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.DOT
-import com.zhangyue.ireader.traceMethod.transform.FirstTranceTransform.Companion.SEPARATOR
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.APPLY_CONFIG_CLASS_NAME
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.APPLY_CONFIG_FIELD_ERROR_THRESHOLD
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.APPLY_CONFIG_FIELD_INFO_THRESHOLD
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.APPLY_CONFIG_FIELD_ONLY_CHECK_MAIN
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.APPLY_CONFIG_FIELD_WARN_THRESHOLD
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.DOT
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.SEPARATOR
 import com.zhangyue.ireader.traceMethod.utils.Logger
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes

@@ -5,7 +5,7 @@ import org.gradle.api.Project
 import org.objectweb.asm.Opcodes
 
 
-class FirstTranceTransform(project: Project) : BaseTransform(project) {
+class FirstTraceTransform(project: Project) : BaseTransform(project) {
 
     private var startTime: Long = 0
 
