@@ -1,15 +1,20 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
+import com.zhangyue.ireader.traceMethod.GlobalConfig
 import com.zhangyue.ireader.traceMethod.printer.MethodInfo
 import com.zhangyue.ireader.traceMethod.printer.TraceMethodBean
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.COMMA
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.DOT
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.EXECUTOR_ANNOTATION_DESCRIPTOR
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.METHOD_TRACE_CLASS_NAME
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.METHOD_TRACE_ENTER_DESCRIPTOR
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.METHOD_TRACE_ENTER_NAME
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.METHOD_TRACE_EXIT_DESCRIPTOR
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.METHOD_TRACE_EXIT_NAME
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.SEPARATOR
+import com.zhangyue.ireader.traceMethod.utils.Logger
+import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
 import org.objectweb.asm.commons.AdviceAdapter
@@ -25,26 +30,83 @@ class TraceMethodAdapter(
     access: Int,
     name: String,
     descriptor: String,
+    hasExecutorAnnotation: Boolean,
     traceMethodBean: TraceMethodBean
 ) : AdviceAdapter(api, mv, access, name, descriptor) {
-
     private var className: String
     private var methodName: String
-    private var init: Boolean = false
-    private var clinit: Boolean = false
+
+    // 是否匹配设置的包名路径
+    private var isInSetupPathList = false
+
+    // 包裹方法的类有 [com.zhangyue.ireader.trace_1_2_3_7_process.annotation.HookMethodTrace] 注解
+    private val hasExecutorAnnotationOnClass: Boolean
+
+    // 方法上是否有执行插桩的注解
+    private var hasAnnotationOnMethod = false
+
+    // 是否是 static 方法
     private var static: Boolean = false
+
+    // 是否执行注入逻辑
+    private var inject: Boolean = false
+
+    // 用来记录哪些类执行了插桩
     private val bean: TraceMethodBean = traceMethodBean
 
     init {
         this.className = className.replace(SEPARATOR, DOT)
         this.methodName = name
-        init = name == "<init>"
-        clinit = name == "<clinit>"
-        static = access and Opcodes.ACC_STATIC == Opcodes.ACC_STATIC
+        this.static = access and Opcodes.ACC_STATIC == Opcodes.ACC_STATIC
+        this.isInSetupPathList = inSetUpPathList(this.className)
+        this.hasExecutorAnnotationOnClass = hasExecutorAnnotation
     }
 
+    private fun inSetUpPathList(className: String): Boolean {
+        val isInPkgList = GlobalConfig.pluginConfig.pkgList.itemStartWith(className) { init, it ->
+            init.startsWith(it)
+        }
+        return isInPkgList.also {
+            if (it) {
+                Logger.info("transform class $className")
+            }
+        }
+    }
+
+    override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor {
+        if (descriptor == EXECUTOR_ANNOTATION_DESCRIPTOR) {
+            hasAnnotationOnMethod = true
+        }
+        return super.visitAnnotation(descriptor, visible)
+    }
+
+
+    private inline fun <T : CharSequence> Iterable<T>.itemStartWith(
+        init: T,
+        action: (init: T, T) -> Boolean
+    ): Boolean {
+        var contains = false
+        for (e in this) {
+            if (action(init, e)) {
+                contains = true
+                break
+            }
+        }
+        return contains
+    }
+
+    override fun visitCode() {
+        inject = hasExecutorAnnotationOnClass
+                || hasAnnotationOnMethod
+                || isInSetupPathList
+        super.visitCode()
+    }
+
+
     override fun onMethodEnter() {
-        super.onMethodEnter()
+        if (!inject) {
+            return
+        }
         if (static) {
 //            mv.visitInsn(ACONST_NULL)
             push("null")
@@ -65,7 +127,9 @@ class TraceMethodAdapter(
     }
 
     override fun onMethodExit(opcode: Int) {
-        super.onMethodExit(opcode)
+        if (!inject) {
+            return
+        }
         if (static) {
 //            mv.visitInsn(ACONST_NULL)
             push("null")
@@ -106,6 +170,9 @@ class TraceMethodAdapter(
 
     override fun visitEnd() {
         super.visitEnd()
+        if (!inject) {
+            return
+        }
         bean.methodList.add(MethodInfo(methodName, args(), returns()))
     }
 

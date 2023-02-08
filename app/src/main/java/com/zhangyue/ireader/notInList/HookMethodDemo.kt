@@ -4,11 +4,12 @@ import androidx.annotation.Keep
 import com.zhangyue.ireader.trace_1_2_3_7_process.annotation.HookMethodTrace
 
 @Keep
-@HookMethodTrace
-class HookClassDemo {
+class HookMethodDemo {
 
+    @HookMethodTrace
     fun canHook() {
-        Thread.sleep(60)
+        Thread.sleep(70)
     }
+
 
 }

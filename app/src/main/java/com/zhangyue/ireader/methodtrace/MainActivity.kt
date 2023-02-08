@@ -2,6 +2,8 @@ package com.zhangyue.ireader.methodtrace
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.zhangyue.ireader.notInList.HookClassDemo
+import com.zhangyue.ireader.notInList.HookMethodDemo
 
 class MainActivity : AppCompatActivity() {
 
@@ -32,6 +34,20 @@ class MainActivity : AppCompatActivity() {
 
         //递归访问
         cycleCall()
+
+        //访问 static 方法
+        MainActivity.staticFun()
+
+        //访问注解方法
+        HookClassDemo().canHook()
+        HookMethodDemo().canHook()
+    }
+
+    companion object {
+        @JvmStatic
+        fun staticFun() {
+            Thread.sleep(100)
+        }
     }
 
 

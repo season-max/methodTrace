@@ -115,6 +115,8 @@ class SampleMethodTraceHandle : IMethodTraceHandle {
                 .append("\r\n")
                 .append("[costTime] : $const ms")
                 .append("\r\n")
+                .append("[pid] : ${android.os.Process.myPid()}")
+                .append("\r\n")
                 .append("[threadName] : ${Thread.currentThread().name}")
                 .append("\r\n")
                 .append("[callStack] : ")

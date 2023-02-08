@@ -1,6 +1,5 @@
 package com.zhangyue.ireader.traceMethod.visitor
 
-import com.zhangyue.ireader.traceMethod.GlobalConfig
 import com.zhangyue.ireader.traceMethod.printer.TraceMethodBean
 import com.zhangyue.ireader.traceMethod.printer.TraceMethodManager
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.DOT
@@ -8,7 +7,6 @@ import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.IGNORE_ANNOTATION_DESCRIPTOR
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.TRACE_METHOD_PROCESS_PACKAGE
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.SEPARATOR
-import com.zhangyue.ireader.traceMethod.utils.Logger
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.ClassVisitor
 import org.objectweb.asm.MethodVisitor
@@ -17,11 +15,6 @@ import org.objectweb.asm.Opcodes
 class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
 
     lateinit var className: String
-
-    /**
-     * 是否匹配设置的包名路径
-     */
-    private var isInSetupPathList = false
 
     /**
      * 是否是插件内部的 package
@@ -54,7 +47,6 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
     ) {
         super.visit(version, access, name, signature, superName, interfaces)
         className = name ?: "UNKNOWN"
-        isInSetupPathList = inSetUpPathList(className)
         isInPluginPkg = inPluginPkg(className)
         bean = TraceMethodBean(className.replace(SEPARATOR, DOT))
     }
@@ -72,34 +64,6 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
             TRACE_METHOD_PROCESS_PACKAGE
         )
     }
-
-    private fun inSetUpPathList(className: String): Boolean {
-        val tempName = className.replace(SEPARATOR, DOT)
-        val isInPkgList = GlobalConfig.pluginConfig.pkgList.itemStartWith(tempName) { init, it ->
-            init.startsWith(it)
-        }
-        return isInPkgList.also {
-            if (it) {
-                Logger.info("transform class $className")
-            }
-        }
-    }
-
-
-    private inline fun <T : CharSequence> Iterable<T>.itemStartWith(
-        init: T,
-        action: (init: T, T) -> Boolean
-    ): Boolean {
-        var contains = false
-        for (e in this) {
-            if (action(init, e)) {
-                contains = true
-                break
-            }
-        }
-        return contains
-    }
-
 
     override fun visitMethod(
         access: Int,
@@ -122,19 +86,25 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         if (isInPluginPkg) {
             return mv
         }
-        return if (isInSetupPathList || hasExecutorAnnotation) {
-            TraceMethodAdapter(
-                className, api, mv, access, name, descriptor, bean!!
-            )
-        } else {
-            mv
-        }
+
+        return TraceMethodAdapter(
+            className,
+            api,
+            mv,
+            access,
+            name,
+            descriptor,
+            hasExecutorAnnotation,
+            bean!!
+        )
     }
 
     override fun visitEnd() {
         super.visitEnd()
         if (bean?.methodList?.isNotEmpty() == true) {
             TraceMethodManager.get().addItem(bean!!)
+        } else {
+            bean = null
         }
     }
 }
