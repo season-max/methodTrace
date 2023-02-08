@@ -118,11 +118,13 @@ class SampleMethodTraceHandle : IMethodTraceHandle {
                 .append("[pid] : ${android.os.Process.myPid()}")
                 .append("\r\n")
                 .append("[threadName] : ${Thread.currentThread().name}")
-                .append("\r\n")
-                .append("[callStack] : ")
-                .append("\r\n")
-                .append(TraceUtils.getThreadStackTrace(Thread.currentThread()))
-                .append(LINE)
+            if (printCallStack) {
+                append("\r\n")
+                    .append("[callStack] : ")
+                    .append("\r\n")
+                    .append(TraceUtils.getThreadStackTrace(Thread.currentThread()))
+            }
+            append(LINE)
         }.toString()
     }
 }

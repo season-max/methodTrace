@@ -12,6 +12,7 @@ trace_config {
     errorThreshold = 50
     warnThreshold = 30
     infoThreshold = 10
+    printCallStack = true
 //    customHandle = "com.zhangyue.ireader.methodtrace.MyMethodTraceHandle"
 }
 

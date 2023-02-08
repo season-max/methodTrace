@@ -40,6 +40,7 @@ trace_config {
     errorThreshold = 50
     warnThreshold = 30
     infoThreshold = 20
+    printCallStack = true
     customHandle = "com.zhangyue.ireader.methodtrace.MyMethodTraceHandle"
 }
 
@@ -67,6 +68,10 @@ dependencies {
 ### infoThreshold，warnThreshold，errorThreshold
 
 > 设置了三级 log 的阈值，要保证 0 < info < warn < error,至少需要设置一个级别的阈值
+
+### printCallStack
+
+> 是否打印方法的堆栈信息，默认不打印。打印堆栈使 log 信息过长，不易查看。用户可以根据需要配置
 
 ### customHandle
 
@@ -106,8 +111,8 @@ class MyMethodTraceHandle : IMethodTraceHandle {
 
 ### 注解
 
-- HookMethodTrace：执行插桩的注解。即使某个方法所在的类或者某个类和插件设置的 **pkgList** 不匹配，如果有此注解，也会执行插桩逻辑
-- IgnoreMethodTrace：忽略插桩的注解，优先级大于 HookMethodTrace
+- HookMethodTrace：执行插桩的注解，作用于方法或者类型上。即使某个方法所在的类或者某个类和插件设置的 **pkgList** 不匹配，如果有此注解，也会执行插桩逻辑
+- IgnoreMethodTrace：忽略插桩的注解，作用于类型上，优先级大于 HookMethodTrace
 
 ## 效果
 

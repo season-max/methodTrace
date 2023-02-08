@@ -60,6 +60,7 @@ class FirstTraceTransform(project: Project) : BaseTransform(project) {
         const val APPLY_CONFIG_FIELD_INFO_THRESHOLD = "infoConstThreshold1"
         const val APPLY_CONFIG_FIELD_WARN_THRESHOLD = "warnConstThreshold1"
         const val APPLY_CONFIG_FIELD_ERROR_THRESHOLD = "errorConstThreshold1"
+        const val APPLY_CONFIG_FIELD_PRINT_CALLSTACK = "printCallStack"
 
         /**
          * 耗时处理类

@@ -2,6 +2,8 @@ package com.zhangyue.ireader.trace_1_2_3_7_process
 
 var onlyCheckMainThread1: Boolean = true
 
+var printCallStack: Boolean = false
+
 var errorConstThreshold1: Int = Integer.MAX_VALUE
 
 var warnConstThreshold1 = Integer.MAX_VALUE

@@ -5,6 +5,7 @@ import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.APPLY_CONFIG_FIELD_ERROR_THRESHOLD
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.APPLY_CONFIG_FIELD_INFO_THRESHOLD
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.APPLY_CONFIG_FIELD_ONLY_CHECK_MAIN
+import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.APPLY_CONFIG_FIELD_PRINT_CALLSTACK
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.APPLY_CONFIG_FIELD_WARN_THRESHOLD
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.DOT
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.SEPARATOR
@@ -44,19 +45,23 @@ class ApplyConfigMethodAdapter(
         val info: Int = GlobalConfig.pluginConfig.infoThreshold.ifNull()
         val warn: Int = GlobalConfig.pluginConfig.warnThreshold.ifNull()
         val error: Int = GlobalConfig.pluginConfig.errorThreshold.ifNull()
+        val printCallStack: Boolean = GlobalConfig.pluginConfig.printCallStack
         val owner = APPLY_CONFIG_CLASS_NAME.replace(DOT, SEPARATOR)
         // load onlyCheckMain
         push(onlyCheckMain)
         mv.visitVarInsn(Opcodes.ISTORE, 0)
-        // load info
+        // load info threshold
         push(info)
         mv.visitVarInsn(Opcodes.ISTORE, 1)
-        // load warn
+        // load warn threshold
         push(warn)
         mv.visitVarInsn(Opcodes.ISTORE, 2)
-        // load error
+        // load error threshold
         push(error)
         mv.visitVarInsn(Opcodes.ISTORE, 3)
+        // load printCallStack
+        push(printCallStack)
+        mv.visitVarInsn(Opcodes.ISTORE, 4)
         // put field
         mv.visitVarInsn(Opcodes.ILOAD, 0)
         mv.visitFieldInsn(Opcodes.PUTSTATIC, owner, APPLY_CONFIG_FIELD_ONLY_CHECK_MAIN, "Z")
@@ -69,6 +74,9 @@ class ApplyConfigMethodAdapter(
         // put field
         mv.visitVarInsn(Opcodes.ILOAD, 3)
         mv.visitFieldInsn(Opcodes.PUTSTATIC, owner, APPLY_CONFIG_FIELD_ERROR_THRESHOLD, "I")
+        // put filed
+        mv.visitVarInsn(Opcodes.ILOAD, 4)
+        mv.visitFieldInsn(Opcodes.PUTSTATIC, owner, APPLY_CONFIG_FIELD_PRINT_CALLSTACK, "I")
     }
 
 

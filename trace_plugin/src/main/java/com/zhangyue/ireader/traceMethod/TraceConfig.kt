@@ -47,8 +47,16 @@ open class TraceConfig {
      */
     @JvmField
     var customHandle: String? = null
+
+    /**
+     * 是否打印调用堆栈
+     * 打印堆栈会导致日志过长，可以选择不打印
+     *
+     */
+    @JvmField
+    var printCallStack: Boolean = false
     override fun toString(): String {
-        return "TraceConfig(printlnLog=$printlnLog, pkgList=$pkgList, checkOnlyMainThread=$checkOnlyMainThread, errorThreshold=$errorThreshold, warnThreshold=$warnThreshold, infoThreshold=$infoThreshold, customHandle=$customHandle)"
+        return "TraceConfig(printlnLog=$printlnLog, pkgList=$pkgList, checkOnlyMainThread=$checkOnlyMainThread, errorThreshold=$errorThreshold, warnThreshold=$warnThreshold, infoThreshold=$infoThreshold, customHandle=$customHandle, printCallStack=$printCallStack)"
     }
 
 
