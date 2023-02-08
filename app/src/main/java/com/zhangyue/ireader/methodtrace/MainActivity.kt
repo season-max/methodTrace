@@ -2,6 +2,7 @@ package com.zhangyue.ireader.methodtrace
 
 import androidx.appcompat.app.AppCompatActivity
 import android.os.Bundle
+import com.export.test.Export
 import com.zhangyue.ireader.notInList.HookClassDemo
 import com.zhangyue.ireader.notInList.HookMethodDemo
 
@@ -41,6 +42,9 @@ class MainActivity : AppCompatActivity() {
         //访问注解方法
         HookClassDemo().canHook()
         HookMethodDemo().canHook()
+
+        //访问外部方法
+        Export.export()
     }
 
     companion object {
@@ -84,5 +88,9 @@ class MainActivity : AppCompatActivity() {
     private fun methodConstError() {
 
         Thread.sleep(51)
+    }
+
+    private fun emptyFun(){
+
     }
 }

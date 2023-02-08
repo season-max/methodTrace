@@ -5,7 +5,7 @@ plugins {
 apply plugin: 'method-trace-plugin'
 trace_config {
     printlnLog = true
-    pkgList = ['com.zhangyue.ireader.methodtrace']
+    pkgList = ['com.zhangyue.ireader.methodtrace','com.export.test']
     checkOnlyMainThread = false
     //保证 info < warn < error,
     // 如果阈值未设置，不会输出对应的 log 等级的日志
@@ -43,6 +43,12 @@ android {
     }
 }
 
+repositories {
+    flatDir {
+        dirs 'libs'
+    }
+}
+
 dependencies {
 
     implementation 'androidx.appcompat:appcompat:1.3.0'
@@ -54,4 +60,5 @@ dependencies {
 
     implementation project(':trace_process')
 //    implementation 'com.github.season-max.methodTrace:trace_process:0.1'
+    implementation files("libs/testlibrary-debug.aar")
 }

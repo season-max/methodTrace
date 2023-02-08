@@ -3,6 +3,8 @@
     xmlns:tools="http://schemas.android.com/tools"
     package="com.zhangyue.ireader.methodtrace">
 
+    <uses-sdk tools:overrideLibrary="com.zhangyue.ireader.testlibrary"/>
+
     <application
         android:allowBackup="true"
         android:fullBackupContent="@xml/backup_rules"

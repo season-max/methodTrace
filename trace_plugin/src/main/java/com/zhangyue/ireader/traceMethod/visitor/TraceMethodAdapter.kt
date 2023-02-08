@@ -63,13 +63,8 @@ class TraceMethodAdapter(
     }
 
     private fun inSetUpPathList(className: String): Boolean {
-        val isInPkgList = GlobalConfig.pluginConfig.pkgList.itemStartWith(className) { init, it ->
+        return GlobalConfig.pluginConfig.pkgList.itemStartWith(className) { init, it ->
             init.startsWith(it)
-        }
-        return isInPkgList.also {
-            if (it) {
-                Logger.info("transform class $className")
-            }
         }
     }
 
