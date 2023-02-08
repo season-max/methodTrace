@@ -5,6 +5,7 @@ import com.alibaba.fastjson.serializer.SerializerFeature
 import com.zhangyue.ireader.traceMethod.utils.Logger
 import org.gradle.api.Project
 import java.io.File
+import java.nio.charset.Charset
 
 class TraceMethodManager private constructor() {
 
@@ -21,6 +22,7 @@ class TraceMethodManager private constructor() {
         val inner = TraceMethodManager()
     }
 
+    @Synchronized
     fun addItem(item: TraceMethodBean) {
         items.add(item)
     }
@@ -28,19 +30,44 @@ class TraceMethodManager private constructor() {
 
     private fun toJsonBytes(): ByteArray {
         if (items.isEmpty()) {
-            return "[]".toByteArray()
+            return "{}".toByteArray()
         }
-        val map = mutableMapOf<String, List<MethodInfo>>()
+        val map = mutableMapOf<String, List<String>>()
         for (item in items) {
-            map[item.className] = item.methodList
+            val list = ArrayList<String>()
+            for (info in item.methodList) {
+                val name = info.methodName
+                val args = info.args
+                val returns = info.returns
+                list.add(assembleMethod(name, args, returns))
+            }
+            map[item.className] = list
         }
-        return JSON.toJSONBytes(
-            map,
-            //输出值为 null 的字段
-            SerializerFeature.WriteMapNullValue,
-            //格式化
-            SerializerFeature.PrettyFormat
-        )
+        return try {
+            JSON.toJSONString(
+                map,
+                //输出值为 null 的字段
+                SerializerFeature.WriteMapNullValue,
+                //格式化
+                SerializerFeature.PrettyFormat
+            ).toByteArray(Charset.defaultCharset())
+        } catch (e: Exception) {
+            Logger.error(e.message)
+            "{}".toByteArray()
+        }
+    }
+
+    /**
+     * 拼接成
+     * name[args] --> returns
+     */
+    private fun assembleMethod(name: String, args: String, returns: String): String {
+        val builder = StringBuilder()
+        builder.append(name)
+        builder.append(args)
+        builder.append(" ---> ")
+        builder.append(returns)
+        return builder.toString()
     }
 
     /**

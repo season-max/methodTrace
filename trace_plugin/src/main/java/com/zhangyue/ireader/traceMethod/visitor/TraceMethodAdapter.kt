@@ -86,16 +86,16 @@ class TraceMethodAdapter(
     }
 
     private fun args(): String {
-        val arg = argumentTypes ?: return "[]"
+        val arg = argumentTypes ?: return "()"
         val builder = StringBuilder()
-        builder.append("[")
+        builder.append("(")
         for ((i, value) in arg.withIndex()) {
-            builder.append(value)
+            builder.append(value.className)
             if (i != arg.size - 1) {
                 builder.append(COMMA)
             }
         }
-        builder.append("]")
+        builder.append(")")
         return builder.toString()
     }
 

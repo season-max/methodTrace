@@ -156,7 +156,7 @@ abstract class BaseTransform(val project: Project) : Transform(), TransformListe
             bytes = onTransform(className, sourceBytes)
         } catch (e: Throwable) {
             bytes = sourceBytes
-            Logger.error("throw exception when modify class $className}")
+            Logger.error("throw exception when transform class $className}，error message:${e.message}")
         }
         return bytes
     }

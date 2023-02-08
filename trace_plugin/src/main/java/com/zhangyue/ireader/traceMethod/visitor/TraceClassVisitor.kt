@@ -39,8 +39,10 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
      */
     private var hasExecutorAnnotation = false
 
-
-    private val bean: TraceMethodBean = TraceMethodBean(className.replace(SEPARATOR, DOT))
+    /**
+     * 记录 bean
+     */
+    private var bean: TraceMethodBean? = null
 
     override fun visit(
         version: Int,
@@ -54,6 +56,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
         className = name ?: "UNKNOWN"
         isInSetupPathList = inSetUpPathList(className)
         isInPluginPkg = inPluginPkg(className)
+        bean = TraceMethodBean(className.replace(SEPARATOR, DOT))
     }
 
     override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor {
@@ -72,7 +75,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
 
     private fun inSetUpPathList(className: String): Boolean {
         val tempName = className.replace(SEPARATOR, DOT)
-        val isInPkgList = GlobalConfig.pluginConfig.pkgList.startWith(tempName) { init, it ->
+        val isInPkgList = GlobalConfig.pluginConfig.pkgList.itemStartWith(tempName) { init, it ->
             init.startsWith(it)
         }
         return isInPkgList.also {
@@ -83,7 +86,7 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
     }
 
 
-    private inline fun <T : CharSequence> Iterable<T>.startWith(
+    private inline fun <T : CharSequence> Iterable<T>.itemStartWith(
         init: T,
         action: (init: T, T) -> Boolean
     ): Boolean {
@@ -120,13 +123,8 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
             return mv
         }
         return if (isInSetupPathList || hasExecutorAnnotation) {
-            Logger.info("trace method $className --> $name")
             TraceMethodAdapter(
-                className, api, mv, access, name, descriptor, TraceMethodBean(
-                    className.replace(
-                        SEPARATOR, DOT
-                    )
-                )
+                className, api, mv, access, name, descriptor, bean!!
             )
         } else {
             mv
@@ -135,6 +133,8 @@ class TraceClassVisitor(api: Int, cv: ClassVisitor) : ClassVisitor(api, cv) {
 
     override fun visitEnd() {
         super.visitEnd()
-        TraceMethodManager.get().addItem(bean)
+        if (bean?.methodList?.isNotEmpty() == true) {
+            TraceMethodManager.get().addItem(bean!!)
+        }
     }
 }

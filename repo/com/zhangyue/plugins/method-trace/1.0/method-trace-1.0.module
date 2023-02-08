@@ -11,7 +11,7 @@
   "createdBy": {
     "gradle": {
       "version": "6.2",
-      "buildId": "ieb5cdekknhjdcxxhcls675t34"
+      "buildId": "5xmrortnyrdo5ftj7nydzoqfj4"
     }
   },
   "variants": [
@@ -38,11 +38,11 @@
         {
           "name": "method-trace-1.0.jar",
           "url": "method-trace-1.0.jar",
-          "size": 53973,
-          "sha512": "c60b387cf16ac63500cd6b09ae63f510712d58d087fba637c12250859ed659579320d9169395b36cb6a965728ce90411b68d5d9ce14aa9691eccaf815a6d3f00",
-          "sha256": "8bca7b048b446cbe647768c584b9f43a193bf2bef65d9b5e58185c283dae48c1",
-          "sha1": "a0a47562881664f85814a04667edaeba5a5e29c3",
-          "md5": "dbc5536fde95da1812dea2fcedc9892a"
+          "size": 56886,
+          "sha512": "abf5b59eefbf3eb40b94280345f4eb8aa6e9c8c94cf2c3b0d12e7d422b4299d15db9167f0401cdec72035860bea09056c9dad6845a0d29cd93f5376e1ffea394",
+          "sha256": "fe09f74e08cb6b7a1d2baa49a9d6f5b5cf3eccd2b5237ac90e886cd5709a492f",
+          "sha1": "5c748fc858482d4e27e1fc1108058e6797eda101",
+          "md5": "7c7250e12b56a07fd12ef3c90baae399"
         }
       ]
     },
@@ -83,11 +83,11 @@
         {
           "name": "method-trace-1.0.jar",
           "url": "method-trace-1.0.jar",
-          "size": 53973,
-          "sha512": "c60b387cf16ac63500cd6b09ae63f510712d58d087fba637c12250859ed659579320d9169395b36cb6a965728ce90411b68d5d9ce14aa9691eccaf815a6d3f00",
-          "sha256": "8bca7b048b446cbe647768c584b9f43a193bf2bef65d9b5e58185c283dae48c1",
-          "sha1": "a0a47562881664f85814a04667edaeba5a5e29c3",
-          "md5": "dbc5536fde95da1812dea2fcedc9892a"
+          "size": 56886,
+          "sha512": "abf5b59eefbf3eb40b94280345f4eb8aa6e9c8c94cf2c3b0d12e7d422b4299d15db9167f0401cdec72035860bea09056c9dad6845a0d29cd93f5376e1ffea394",
+          "sha256": "fe09f74e08cb6b7a1d2baa49a9d6f5b5cf3eccd2b5237ac90e886cd5709a492f",
+          "sha1": "5c748fc858482d4e27e1fc1108058e6797eda101",
+          "md5": "7c7250e12b56a07fd12ef3c90baae399"
         }
       ]
     }
