@@ -30,7 +30,7 @@ class PluginEntry : Plugin<Project> {
     }
 
     private fun applyProjectConfig(project: Project, config: TraceConfig) {
-        GlobalConfig.pluginConfig = config
+        GlobalConfig.setPluginConfig(config)
         //检查插件中参数的设置
         checkPluginSet(project)
         println("plugin config -> $config")

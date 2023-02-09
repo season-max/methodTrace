@@ -62,21 +62,21 @@ class ApplyConfigMethodAdapter(
         // load printCallStack
         push(printCallStack)
         mv.visitVarInsn(Opcodes.ISTORE, 4)
-        // put field
+        // put field onlyCheckMainThread1
         mv.visitVarInsn(Opcodes.ILOAD, 0)
         mv.visitFieldInsn(Opcodes.PUTSTATIC, owner, APPLY_CONFIG_FIELD_ONLY_CHECK_MAIN, "Z")
-        // put field
+        // put field infoConstThreshold1
         mv.visitVarInsn(Opcodes.ILOAD, 1)
         mv.visitFieldInsn(Opcodes.PUTSTATIC, owner, APPLY_CONFIG_FIELD_INFO_THRESHOLD, "I")
-        // put field
+        // put field warnConstThreshold1
         mv.visitVarInsn(Opcodes.ILOAD, 2)
         mv.visitFieldInsn(Opcodes.PUTSTATIC, owner, APPLY_CONFIG_FIELD_WARN_THRESHOLD, "I")
-        // put field
+        // put field errorConstThreshold1
         mv.visitVarInsn(Opcodes.ILOAD, 3)
         mv.visitFieldInsn(Opcodes.PUTSTATIC, owner, APPLY_CONFIG_FIELD_ERROR_THRESHOLD, "I")
         // put filed
         mv.visitVarInsn(Opcodes.ILOAD, 4)
-        mv.visitFieldInsn(Opcodes.PUTSTATIC, owner, APPLY_CONFIG_FIELD_PRINT_CALLSTACK, "I")
+        mv.visitFieldInsn(Opcodes.PUTSTATIC, owner, APPLY_CONFIG_FIELD_PRINT_CALLSTACK, "Z")
     }
 
 

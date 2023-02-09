@@ -1,7 +1,10 @@
 package com.zhangyue.ireader.traceMethod.transform
 
 import com.android.build.api.transform.TransformInvocation
+import com.zhangyue.ireader.traceMethod.GlobalConfig
 import com.zhangyue.ireader.traceMethod.printer.TraceMethodManager
+import com.zhangyue.ireader.traceMethod.utils.Logger
+import com.zhangyue.ireader.traceMethod.utils.itemMatchAction
 import org.gradle.api.Project
 import org.objectweb.asm.Opcodes
 
@@ -25,15 +28,34 @@ class FirstTraceTransform(project: Project) : BaseTransform(project) {
 
 
     override fun onTransform(className: String, bytes: ByteArray): ByteArray {
-        val transforms =
+        return if (matchWhiteList(className)) {
+            bytes
+        } else {
+            Logger.info("start transform class $className")
             listOf(
                 CustomHandleTransform(),
                 ApplyConfigTransform(),
                 MethodTraceTransform()
-            )
-        return transforms.fold(bytes) { b, t ->
-            t.onTransform(className, b)
+            ).fold(bytes) { b, t ->
+                t.onTransform(className, b)
+            }
         }
+    }
+
+    /**
+     * 是非匹配白名单
+     * @param className class name ，aaa/bbb/ccc
+     * @return true-匹配，不进行 transform
+     */
+    private fun matchWhiteList(className: String): Boolean {
+        return GlobalConfig.pluginConfig.whiteList?.itemMatchAction(
+            className.replace(
+                SEPARATOR,
+                DOT
+            )
+        ) { init, it ->
+            init.startsWith(it)
+        } ?: false
     }
 
     companion object {
@@ -73,7 +95,9 @@ class FirstTraceTransform(project: Project) : BaseTransform(project) {
         const val FILED_NAME = "METHOD_TRACE_HANDLE"
         //方法入口
         const val METHOD_TRACE_ENTER_NAME = "onMethodEnter"
-        const val METHOD_TRACE_ENTER_DESCRIPTOR = "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
+        const val METHOD_TRACE_ENTER_DESCRIPTOR =
+            "(Ljava/lang/Object;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;Ljava/lang/String;)V"
+
         //方法出口
         const val METHOD_TRACE_EXIT_NAME = "onMethodExit"
         const val METHOD_TRACE_EXIT_DESCRIPTOR = METHOD_TRACE_ENTER_DESCRIPTOR

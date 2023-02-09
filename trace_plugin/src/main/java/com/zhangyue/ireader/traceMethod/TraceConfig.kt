@@ -16,7 +16,7 @@ open class TraceConfig {
      * 插桩范围
      */
     @JvmField
-    var pkgList: List<String> = ArrayList()
+    var pkgList: List<String>? = ArrayList()
 
     /**
      * 是否只检测主线程
@@ -55,8 +55,14 @@ open class TraceConfig {
      */
     @JvmField
     var printCallStack: Boolean = false
+
+    /**
+     * 白名单，匹配白名单的类不执行插桩
+     */
+    @JvmField
+    var whiteList: List<String>? = ArrayList()
     override fun toString(): String {
-        return "TraceConfig(printlnLog=$printlnLog, pkgList=$pkgList, checkOnlyMainThread=$checkOnlyMainThread, errorThreshold=$errorThreshold, warnThreshold=$warnThreshold, infoThreshold=$infoThreshold, customHandle=$customHandle, printCallStack=$printCallStack)"
+        return "TraceConfig(printlnLog=$printlnLog, pkgList=$pkgList, checkOnlyMainThread=$checkOnlyMainThread, errorThreshold=$errorThreshold, warnThreshold=$warnThreshold, infoThreshold=$infoThreshold, customHandle=$customHandle, printCallStack=$printCallStack,whiteList=$whiteList)"
     }
 
 

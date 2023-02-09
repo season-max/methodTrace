@@ -41,6 +41,11 @@ trace_config {
     warnThreshold = 30
     infoThreshold = 20
     printCallStack = true
+    whiteList = ['androidx.',
+                 "android.support.",
+                 "kotlin.",
+                 "kotlinx.",
+                 "com.google."]
     customHandle = "com.zhangyue.ireader.methodtrace.MyMethodTraceHandle"
 }
 
@@ -49,7 +54,7 @@ dependencies {
 }
 ```
 
-3.项目运行之后，在 logcat 过滤 methodTrace 获取日志信息
+3.项目运行之后，在 logcat 过滤 **methodTrace** 获取日志信息
 
 ## 插件配置项说明
 
@@ -59,7 +64,8 @@ dependencies {
 
 ### pkgList
 
-> 想要执行耗时监测的包名，会对包名下的所有 class 进行插桩，直接匹配到某个 class 全限定名称也可以
+> 想要执行耗时监测的包名，会对包名下的所有 class 进行插桩，直接匹配到某个 class 全限定名称也可以。
+> **如果不设置或者设置为 [] ，则执行全插桩**
 
 ### checkOnlyMainThread
 
@@ -72,6 +78,10 @@ dependencies {
 ### printCallStack
 
 > 是否打印方法的堆栈信息，默认不打印。打印堆栈使 log 信息过长，不易查看。用户可以根据需要配置
+
+### whiteList
+
+> 白名单，匹配的类不执行插桩。
 
 ### customHandle
 

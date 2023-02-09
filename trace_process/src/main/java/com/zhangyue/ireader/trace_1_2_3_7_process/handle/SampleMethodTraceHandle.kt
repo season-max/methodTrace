@@ -123,6 +123,8 @@ class SampleMethodTraceHandle : IMethodTraceHandle {
                     .append("[callStack] : ")
                     .append("\r\n")
                     .append(TraceUtils.getThreadStackTrace(Thread.currentThread()))
+            } else {
+                append("\r\n")
             }
             append(LINE)
         }.toString()

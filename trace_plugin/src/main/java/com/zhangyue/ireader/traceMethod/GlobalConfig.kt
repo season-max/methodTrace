@@ -1,15 +1,28 @@
 package com.zhangyue.ireader.traceMethod
 
+import com.zhangyue.ireader.traceMethod.utils.Logger
 import org.gradle.api.Project
 import java.lang.RuntimeException
 
 object GlobalConfig {
+    @JvmField
     var pluginConfig: TraceConfig = TraceConfig()
+
+    /**
+     * 是否执行全插桩
+     */
+    var injectAll = false
 
     /**
      * 设置上限 50s
      */
     private const val THRESHOLD_UPPER_LIMIT = Int.MAX_VALUE
+
+    fun setPluginConfig(config: TraceConfig) {
+        pluginConfig = config
+        injectAll = config.pkgList?.isEmpty() ?: true
+        Logger.info("injectAll ------------------> $injectAll")
+    }
 
     /**
      * return if arg <= 0

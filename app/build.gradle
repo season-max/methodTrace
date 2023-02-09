@@ -5,7 +5,8 @@ plugins {
 apply plugin: 'method-trace-plugin'
 trace_config {
     printlnLog = true
-    pkgList = ['com.zhangyue.ireader.methodtrace','com.export.test']
+    //如果不设置或者设置为空，则全插桩
+    pkgList = []
     checkOnlyMainThread = false
     //保证 info < warn < error,
     // 如果阈值未设置，不会输出对应的 log 等级的日志
@@ -13,6 +14,12 @@ trace_config {
     warnThreshold = 30
     infoThreshold = 10
     printCallStack = true
+    //白名单，匹配的类不执行插桩
+    whiteList = ['androidx.',
+                 "android.support.",
+                 "kotlin.",
+                 "kotlinx.",
+                 "com.google."]
 //    customHandle = "com.zhangyue.ireader.methodtrace.MyMethodTraceHandle"
 }
 

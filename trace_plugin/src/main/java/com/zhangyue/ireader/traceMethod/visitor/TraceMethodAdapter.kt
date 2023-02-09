@@ -13,7 +13,7 @@ import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.METHOD_TRACE_EXIT_DESCRIPTOR
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.METHOD_TRACE_EXIT_NAME
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.SEPARATOR
-import com.zhangyue.ireader.traceMethod.utils.Logger
+import com.zhangyue.ireader.traceMethod.utils.itemMatchAction
 import org.objectweb.asm.AnnotationVisitor
 import org.objectweb.asm.MethodVisitor
 import org.objectweb.asm.Opcodes
@@ -51,6 +51,9 @@ class TraceMethodAdapter(
     // 是否执行注入逻辑
     private var inject: Boolean = false
 
+    // 是否是全插桩
+    private var injectAll: Boolean = false
+
     // 用来记录哪些类执行了插桩
     private val bean: TraceMethodBean = traceMethodBean
 
@@ -58,14 +61,15 @@ class TraceMethodAdapter(
         this.className = className.replace(SEPARATOR, DOT)
         this.methodName = name
         this.static = access and Opcodes.ACC_STATIC == Opcodes.ACC_STATIC
+        this.injectAll = GlobalConfig.injectAll
         this.isInSetupPathList = inSetUpPathList(this.className)
         this.hasExecutorAnnotationOnClass = hasExecutorAnnotation
     }
 
     private fun inSetUpPathList(className: String): Boolean {
-        return GlobalConfig.pluginConfig.pkgList.itemStartWith(className) { init, it ->
+        return GlobalConfig.pluginConfig.pkgList?.itemMatchAction(className) { init, it ->
             init.startsWith(it)
-        }
+        } ?: false
     }
 
     override fun visitAnnotation(descriptor: String?, visible: Boolean): AnnotationVisitor {
@@ -75,25 +79,11 @@ class TraceMethodAdapter(
         return super.visitAnnotation(descriptor, visible)
     }
 
-
-    private inline fun <T : CharSequence> Iterable<T>.itemStartWith(
-        init: T,
-        action: (init: T, T) -> Boolean
-    ): Boolean {
-        var contains = false
-        for (e in this) {
-            if (action(init, e)) {
-                contains = true
-                break
-            }
-        }
-        return contains
-    }
-
     override fun visitCode() {
         inject = hasExecutorAnnotationOnClass
                 || hasAnnotationOnMethod
                 || isInSetupPathList
+                || injectAll
         super.visitCode()
     }
 
