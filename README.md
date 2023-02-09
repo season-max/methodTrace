@@ -5,7 +5,7 @@
 ## 使用
 
 1.在 project 的 build.gradle 中引入依赖
-
+> plugin_version = 0.31
 ```groovy
 buildscript {
     repositories {
@@ -50,7 +50,7 @@ trace_config {
 }
 
 dependencies {
-    implementation 'com.github.season-max:methodTrace:0.14'
+    implementation 'com.github.season-max:methodTrace:${plugin_version}'
 }
 ```
 
@@ -85,7 +85,7 @@ dependencies {
 
 ### customHandle
 
-> 自定义监测处理接口的全限定名称，需要实现[IMethodTraceHandle]接口，将方法入口、出口逻辑托管给用户
+> 自定义监测处理接口的全限定名称，需要实现[IMethodTraceHandle]接口，将方法入口、出口逻辑托管给用户，**将不再打印方法耗时信息**
 
 ```kotlin
 /**
