@@ -5,7 +5,8 @@
 ## 使用
 
 1.在 project 的 build.gradle 中引入依赖
-> plugin_version = 0.31
+> plugin_version = 0.35
+
 ```groovy
 buildscript {
     repositories {
@@ -35,6 +36,7 @@ allprojects {
 apply plugin: 'method-trace-plugin'
 trace_config {
     printlnLog = true
+    injectScope = 3
     pkgList = ['com.zhangyue.ireader.methodtrace']
     checkOnlyMainThread = false
     errorThreshold = 50
@@ -62,10 +64,18 @@ dependencies {
 
 > 是否打印插件内部日志信息
 
+### injectScope
+
+> 取值范围**1到3**
+
+- **1** -> 只处理 DirectoryInput
+- **2** -> 只处理 JarInput
+- **3** -> 全都处理
+
 ### pkgList
 
 > 想要执行耗时监测的包名，会对包名下的所有 class 进行插桩，直接匹配到某个 class 全限定名称也可以。
-> **如果不设置或者设置为 [] ，则执行全插桩**
+> **如果不设置或者设置为 [] ，则执行 injectScope 对应的范围内全插桩**
 
 ### checkOnlyMainThread
 
