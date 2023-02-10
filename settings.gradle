@@ -1,5 +1,5 @@
 rootProject.name = "MethodTrace"
 include ':app'
 include ':trace_plugin'
-include ':trace_process'
+include ':trace_process_1_2_3_7'
 include ':testlibrary'

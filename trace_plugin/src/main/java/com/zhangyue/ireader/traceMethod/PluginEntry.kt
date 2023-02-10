@@ -19,7 +19,7 @@ class PluginEntry : Plugin<Project> {
         val config = project.extensions.create("trace_config", TraceConfig::class.java)
         if (isAndroid) {
             project.extensions.getByType(AppExtension::class.java).apply {
-                registerTransform(FirstTraceTransform(project))
+                registerTransform(FirstTraceTransform(project,config))
             }
             project.afterEvaluate {
                 applyProjectConfig(project, config)

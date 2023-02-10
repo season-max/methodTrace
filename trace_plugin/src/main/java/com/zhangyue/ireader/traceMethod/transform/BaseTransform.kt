@@ -130,12 +130,16 @@ abstract class BaseTransform(val project: Project) : Transform(), TransformListe
         if (destFile.exists()) {
             destFile.delete()
         }
+        if (!needTransformDirectory(file)) {
+            FileUtils.copyFile(file, destFile)
+            return
+        }
         val className =
             FileUtil.path2ClassName(file.absolutePath.replace(srcDirPath + File.separator, ""))
         val sourceBytes = IOUtils.toByteArray(FileInputStream(file))
         val modifyBytes = when (file.name.substringAfterLast(".", "")) {
             "class" -> {
-                if (needTransform()) {
+                if (needTransformClass(className)) {
                     transformClass(className, sourceBytes)
                 } else {
                     sourceBytes
@@ -148,7 +152,9 @@ abstract class BaseTransform(val project: Project) : Transform(), TransformListe
         FileUtils.writeByteArrayToFile(destFile, modifyBytes)
     }
 
-    abstract fun needTransform(): Boolean
+    abstract fun needTransformClass(className: String): Boolean
+    abstract fun needTransformJar(jarFile: File): Boolean
+    abstract fun needTransformDirectory(file: File): Boolean
 
     private fun transformClass(className: String, sourceBytes: ByteArray): ByteArray? {
         var bytes: ByteArray?
@@ -207,6 +213,10 @@ abstract class BaseTransform(val project: Project) : Transform(), TransformListe
     }
 
     private fun transformJar(jarFile: File, destFile: File) {
+        if (!needTransformJar(jarFile)) {
+            FileUtils.copyFile(jarFile, destFile)
+            return
+        }
         val jarOutputStream = JarOutputStream(FileOutputStream(destFile))
         val inputJarFile = JarFile(jarFile, false)
         try {
@@ -220,7 +230,7 @@ abstract class BaseTransform(val project: Project) : Transform(), TransformListe
                     if (!jarEntry.isDirectory) {
                         val modifyBytes = when (entryName.substringAfterLast('.', "")) {
                             "class" -> {
-                                if (needTransform()) {
+                                if (needTransformClass(entryName)) {
                                     transformClass(entryName.run {
                                         FileUtil.path2ClassName(this)
                                     }, sourceBytes)

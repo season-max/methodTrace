@@ -3,7 +3,6 @@ package com.zhangyue.ireader.traceMethod.visitor
 import com.zhangyue.ireader.traceMethod.GlobalConfig
 import com.zhangyue.ireader.traceMethod.printer.MethodInfo
 import com.zhangyue.ireader.traceMethod.printer.TraceMethodBean
-import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.COMMA
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.DOT
 import com.zhangyue.ireader.traceMethod.transform.FirstTraceTransform.Companion.EXECUTOR_ANNOTATION_DESCRIPTOR
@@ -61,7 +60,7 @@ class TraceMethodAdapter(
         this.className = className.replace(SEPARATOR, DOT)
         this.methodName = name
         this.static = access and Opcodes.ACC_STATIC == Opcodes.ACC_STATIC
-        this.injectAll = GlobalConfig.injectAll
+        this.injectAll = GlobalConfig.injectAllInScope
         this.isInSetupPathList = inSetUpPathList(this.className)
         this.hasExecutorAnnotationOnClass = hasExecutorAnnotation
     }

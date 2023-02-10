@@ -13,7 +13,7 @@ open class TraceConfig {
     var printlnLog: Boolean = false
 
     /**
-     * 插桩范围
+     * 插桩路径
      */
     @JvmField
     var pkgList: List<String>? = ArrayList()
@@ -57,13 +57,29 @@ open class TraceConfig {
     var printCallStack: Boolean = false
 
     /**
+     * 插桩范围
+     * 01 - 默认是项目和子项目
+     * 10 - 外部库
+     * 11 - 项目&子项目和外部库
+     *
+     */
+    @JvmField
+    var injectScope: Int = 1
+
+    /**
      * 白名单，匹配白名单的类不执行插桩
      */
     @JvmField
     var whiteList: List<String>? = ArrayList()
     override fun toString(): String {
-        return "TraceConfig(printlnLog=$printlnLog, pkgList=$pkgList, checkOnlyMainThread=$checkOnlyMainThread, errorThreshold=$errorThreshold, warnThreshold=$warnThreshold, infoThreshold=$infoThreshold, customHandle=$customHandle, printCallStack=$printCallStack,whiteList=$whiteList)"
+        return "TraceConfig(printlnLog=$printlnLog, pkgList=$pkgList, checkOnlyMainThread=$checkOnlyMainThread, errorThreshold=$errorThreshold, warnThreshold=$warnThreshold, infoThreshold=$infoThreshold, customHandle=$customHandle, printCallStack=$printCallStack,whiteList=$whiteList,injectScope=$injectScope)"
     }
 
+
+    companion object {
+        const val SCOPE_PROJECT = 0b01
+        const val SCOPE_JAR = 0b10
+        const val SCOPE_ALL = 0b11
+    }
 
 }

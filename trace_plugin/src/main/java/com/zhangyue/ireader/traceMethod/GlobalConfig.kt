@@ -1,17 +1,19 @@
 package com.zhangyue.ireader.traceMethod
 
+import com.zhangyue.ireader.traceMethod.TraceConfig.Companion.SCOPE_ALL
+import com.zhangyue.ireader.traceMethod.TraceConfig.Companion.SCOPE_JAR
+import com.zhangyue.ireader.traceMethod.TraceConfig.Companion.SCOPE_PROJECT
 import com.zhangyue.ireader.traceMethod.utils.Logger
 import org.gradle.api.Project
-import java.lang.RuntimeException
 
 object GlobalConfig {
     @JvmField
     var pluginConfig: TraceConfig = TraceConfig()
 
     /**
-     * 是否执行全插桩
+     * 是否在指定的范围执行全插桩
      */
-    var injectAll = false
+    var injectAllInScope = false
 
     /**
      * 设置上限 50s
@@ -20,8 +22,21 @@ object GlobalConfig {
 
     fun setPluginConfig(config: TraceConfig) {
         pluginConfig = config
-        injectAll = config.pkgList?.isEmpty() ?: true
-        Logger.info("injectAll ------------------> $injectAll")
+        injectAllInScope = config.pkgList?.isEmpty() ?: true
+        if (injectAllInScope) {
+            Logger.info(
+                "injectAll in ${
+                    when (config.injectScope) {
+                        SCOPE_PROJECT -> "SCOPE_PROJECT"
+                        SCOPE_JAR -> "SCOPE_JAR"
+                        SCOPE_ALL -> "SCOPE_ALL"
+                        else -> {
+                            ""
+                        }
+                    }
+                }"
+            )
+        }
     }
 
     /**
@@ -85,6 +100,7 @@ object GlobalConfig {
         val i = pluginConfig.infoThreshold
         val w = pluginConfig.warnThreshold
         val e = pluginConfig.errorThreshold
+        val s = pluginConfig.injectScope
         if (isAllNull(i, w, e)) {
             throw RuntimeException("项目 ${project.name} 中需要设置任意一个耗时阈值")
         }
@@ -96,6 +112,9 @@ object GlobalConfig {
         }
         if (i.jge(w) || i.jge(e) || w.jge(e)) {
             throw RuntimeException("项目 ${project.name} 中方法耗时监测插件的设置阈值请保证 info < warn < error")
+        }
+        if (s < SCOPE_PROJECT || s > SCOPE_ALL) {
+            throw RuntimeException("项目 ${project.name} 中设置的插桩范围为 $SCOPE_PROJECT-$SCOPE_ALL")
         }
     }
 }

@@ -2,19 +2,52 @@ package com.zhangyue.ireader.traceMethod.transform
 
 import com.android.build.api.transform.TransformInvocation
 import com.zhangyue.ireader.traceMethod.GlobalConfig
+import com.zhangyue.ireader.traceMethod.TraceConfig
+import com.zhangyue.ireader.traceMethod.TraceConfig.Companion.SCOPE_JAR
+import com.zhangyue.ireader.traceMethod.TraceConfig.Companion.SCOPE_PROJECT
 import com.zhangyue.ireader.traceMethod.printer.TraceMethodManager
 import com.zhangyue.ireader.traceMethod.utils.Logger
 import com.zhangyue.ireader.traceMethod.utils.itemMatchAction
 import org.gradle.api.Project
 import org.objectweb.asm.Opcodes
+import java.io.File
 
 
-class FirstTraceTransform(project: Project) : BaseTransform(project) {
+class FirstTraceTransform(project: Project, config: TraceConfig) : BaseTransform(project) {
+
+    private val config: TraceConfig
+
+    init {
+        this.config = config
+    }
 
     private var startTime: Long = 0
 
-    override fun needTransform() =
+    override fun needTransformClass(className: String) =
         true
+
+    override fun needTransformJar(jarFile: File): Boolean {
+        return (config.injectScope and SCOPE_JAR == SCOPE_JAR || isPluginJar(jarFile)).also {
+            if (it) {
+                Logger.info("transformJar ${jarFile.absolutePath}")
+            }
+        }
+    }
+
+    override fun needTransformDirectory(file: File): Boolean {
+        return (config.injectScope and SCOPE_PROJECT == SCOPE_PROJECT).also {
+            if (it) {
+                Logger.info("transformDirectory ${file.absolutePath}")
+            }
+        }
+    }
+
+    /**
+     * 处理插件内部 jar 包，即使外部设置不插桩 jar 包也需要处理
+     */
+    private fun isPluginJar(jarFile: File): Boolean {
+        return jarFile.absolutePath.contains(PROCESS_MODULE_NAME)
+    }
 
     override fun onTransformStart(transformInvocation: TransformInvocation) {
         println("$name start--------------->")
@@ -119,6 +152,11 @@ class FirstTraceTransform(project: Project) : BaseTransform(project) {
 
         val EXECUTOR_ANNOTATION_DESCRIPTOR =
             "L$TRACE_METHOD_PROCESS_PACKAGE.annotation.HookMethodTrace;".replace(DOT, SEPARATOR)
+
+        /**
+         * 处理逻辑的 module 名称
+         */
+        const val PROCESS_MODULE_NAME = "trace_process_1_2_3_7"
     }
 
 }
