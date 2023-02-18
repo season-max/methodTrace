@@ -6,6 +6,7 @@
 
 1.在 project 的 build.gradle 中引入依赖
 > plugin_version = 0.40
+> trace_version = 0.50
 
 ```groovy
 buildscript {
@@ -52,7 +53,7 @@ trace_config {
 }
 
 dependencies {
-    implementation 'com.github.season-max:methodTrace:${plugin_version}'
+    implementation 'com.github.season-max:methodTrace:${trace_version}'
 }
 ```
 
