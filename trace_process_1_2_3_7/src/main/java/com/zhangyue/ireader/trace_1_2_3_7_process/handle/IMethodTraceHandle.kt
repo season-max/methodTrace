@@ -35,4 +35,15 @@ interface IMethodTraceHandle {
         returnType: String
     )
 
+    /**
+     * 入口校验
+     */
+    fun checkMathStart(): Boolean
+
+
+    /**
+     * 出口校验
+     */
+    fun checkMatchExit(): Boolean
+
 }

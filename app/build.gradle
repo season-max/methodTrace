@@ -15,6 +15,7 @@ trace_config {
     errorThreshold = 50
     warnThreshold = 30
     infoThreshold = 10
+    // 输出 log 的模式，是否是调用栈模式
     printCallStack = true
     //白名单，匹配的类不执行插桩
     whiteList = ['androidx.',

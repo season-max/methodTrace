@@ -21,7 +21,7 @@ class MyMethodTraceHandle : IMethodTraceHandle {
         args: String,
         returnType: String
     ) {
-        Log.e("method_trace_handle", "-------> onMethodEnter")
+        Log.e("method_trace_handle", "$methodName -------> onMethodEnter")
     }
 
     override fun onMethodExit(
@@ -31,6 +31,14 @@ class MyMethodTraceHandle : IMethodTraceHandle {
         args: String,
         returnType: String
     ) {
-        Log.e("method_trace_handle", "-------> onMethodExit")
+        Log.e("method_trace_handle", "$methodName -------> onMethodExit")
+    }
+
+    override fun checkMathStart(): Boolean {
+        return true
+    }
+
+    override fun checkMatchExit(): Boolean {
+        return true
     }
 }

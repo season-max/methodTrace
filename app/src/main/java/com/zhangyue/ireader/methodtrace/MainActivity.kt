@@ -23,11 +23,11 @@ class MainActivity : AppCompatActivity() {
         }, "const_thread").start()
 
         //多线程访问
-        val thread_1 = Thread({
+        Thread({
             multiThreadConst()
             Thread.sleep(10)
         }, "thread_1").start()
-        val thread_2 = Thread({
+        Thread({
             multiThreadConst()
             Thread.sleep(20)
         }, "thread_2").start()
@@ -45,6 +45,19 @@ class MainActivity : AppCompatActivity() {
 
         //访问外部方法
         Export.export()
+
+        //访问异常方法
+        try{
+            throwError()
+        }catch (_:java.lang.Exception){
+
+        }
+    }
+
+    private fun throwError(){
+
+        Thread.sleep(100)
+        val i = 2 / 0
     }
 
     companion object {

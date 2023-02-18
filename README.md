@@ -5,7 +5,7 @@
 ## 使用
 
 1.在 project 的 build.gradle 中引入依赖
-> plugin_version = 0.35
+> plugin_version = 0.40
 
 ```groovy
 buildscript {
@@ -87,7 +87,7 @@ dependencies {
 
 ### printCallStack
 
-> 是否打印方法的堆栈信息，默认不打印。打印堆栈使 log 信息过长，不易查看。用户可以根据需要配置
+> 输出日志的模式，是否是调用栈模式。有两种输出模式，详见效果
 
 ### whiteList
 
@@ -145,6 +145,8 @@ class MyMethodTraceHandle : IMethodTraceHandle {
 
 app 运行之后，会在 logcat 中打印出大于等于设置 log 级别阈值的信息
 
+#### 普通模式
+
 - info --> log.i
   ![info_log](/png/log/info_log.png)
 - warn --> log.w
@@ -152,7 +154,7 @@ app 运行之后，会在 logcat 中打印出大于等于设置 log 级别阈值
 - error --> log.e
   ![error_log](/png/log/error_log.png)
 
-#### 输入日志信息
+##### 日志信息
 
 - this : 当前实例。如果是 static 方法，为 null
 - pkgName : 包名
@@ -162,6 +164,10 @@ app 运行之后，会在 logcat 中打印出大于等于设置 log 级别阈值
 - pid : 进程 pid
 - threadName : 线程名称
 - callStack : 调用堆栈
+
+#### 调用栈模式
+
+![call_stack](/png/log_callstack.png)
 
 ## 基本原理
 
