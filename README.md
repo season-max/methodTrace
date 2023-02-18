@@ -158,13 +158,11 @@ app 运行之后，会在 logcat 中打印出大于等于设置 log 级别阈值
 ##### 日志信息
 
 - this : 当前实例。如果是 static 方法，为 null
-- pkgName : 包名
 - className : 类全限定名称
 - methodName : 方法名称
 - costTime : 耗时，单位 ms
 - pid : 进程 pid
 - threadName : 线程名称
-- callStack : 调用堆栈
 
 #### 调用栈模式
 
