@@ -149,11 +149,11 @@ app 运行之后，会在 logcat 中打印出大于等于设置 log 级别阈值
 #### 普通模式
 
 - info --> log.i
-  ![info_log](/png/log/info_log.png)
+  ![info_log](/png/info_log.png)
 - warn --> log.w
-  ![warn_log](/png/log/warn_log.png)
+  ![warn_log](/png/warn_log.png)
 - error --> log.e
-  ![error_log](/png/log/error_log.png)
+  ![error_log](/png/error_log.png)
 
 ##### 日志信息
 
